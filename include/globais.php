@@ -12,7 +12,7 @@ class Globais{
         //$Authentication_folder = "PaintballSocialNetwork-AuthAPI/";
         //$Authentication_port = ":81/";
         //$this->Authentication_endpoint = "http://localhost".$Authentication_port.$Authentication_folder."Auth";
-
+        $this->adicionar_time = "http://localhost:81/PaintballSocialNetwork-Players/Teams";
 
         $this->sourcecode = "local"; //local ou prod
         $this->banco = "prod";//dev ou prod
