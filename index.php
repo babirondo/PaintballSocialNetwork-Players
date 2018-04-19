@@ -57,29 +57,27 @@ $app->post('/Players/{idusuario}/Team', function ($request, $response, $args)  u
 
 }  );
 
-$app->post('/Teams', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
 
-    $cTeam = new Teams();
-    $retorno = $cTeam->Adicionar_time($request, $response, $args, $request->getParsedBody() );
+
+$app->post('/Teams/Players/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+    $retorno = $cPlayer->getJogadoresbyTeam($request, $response, $args ,  $request->getParsedBody() );
 
     return $retorno;
 
 }  );
-
-
 
 $app->get('/Players/{idusuario}/Experiences', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
 
     $cPlayer = new Players();
-    $retorno = $cPlayer->getJogadorTimes($request, $response, $args  );
+    $retorno = $cPlayer->getJogadorExperiences($request, $response, $args  );
 
     return $retorno;
 
 }  );
-
-
 
 $app->delete('/Players/{idusuariologado}/Experiences/{idexperiencia}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
@@ -90,6 +88,36 @@ $app->delete('/Players/{idusuariologado}/Experiences/{idexperiencia}', function 
     return $retorno;
 
 }  );
+
+$app->get('/{idusuario}/MySquads/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->getMyTeams($request, $response, $args  );
+
+    return $retorno;
+
+}  );
+
+$app->post('/{idusuario}/Teams/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->Adicionar_time($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+}  );
+
+
+$app->post('/Teams', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->Adicionar_time($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+}  );
+
 
 $app->run();
 

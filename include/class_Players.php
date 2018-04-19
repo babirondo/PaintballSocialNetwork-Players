@@ -8,10 +8,55 @@ class Players{
         $this->con->conecta();
     }
 
+    function getJogadoresbyTeam (  $request, $response, $args , $jsonRAW){
+
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+
+        $sql = "SELECT jt.id_time,j.*
+                FROM jogador_times  jt
+                     inner join jogadores j ON (j.id_jogador = jt.id_jogador)
+                WHERE jt.id_time     IN (  ".$jsonRAW['idtime']." )    ";
+
+        $this->con->executa($sql);
+
+        if ( $this->con->nrw > 0 ){
+            $contador = 0;
+
+            $data =   array(	"resultado" =>  "SUCESSO" );
+
+            while ($this->con->navega(0)){
+                $contador++;
+                $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["NOME"] = $this->con->dados["nome"];
+
+            }
+
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+        }
+        else {
+
+            // nao encontrado
+            $data =    array(	"resultado" =>  "ERRO",
+                "erro" => "Nao foi possivel encontrar dados deste jogador ");
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
 
 
 
-    function getJogadorTimes(  $request, $response, $args ){
+        }
+
+    }
+
+
+    function getJogadorExperiences(  $request, $response, $args ){
 
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",

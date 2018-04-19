@@ -9,7 +9,48 @@ class Teams{
     }
 
 
+    function getMyTeams(  $request, $response, $args ){
 
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+
+        $sql = "SELECT * FROM times  WHERE idowner = '".$args['idusuario']."'  ";
+        $this->con->executa($sql);
+
+        if ( $this->con->nrw > 0 ){
+            $contador = 0;
+
+            $data =   array(	"resultado" =>  "SUCESSO" );
+
+            while ($this->con->navega(0)){
+                $contador++;
+                $data["TIMES"][$this->con->dados["id"]]["time"] = $this->con->dados["time"];
+
+            }
+
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+        }
+        else {
+
+            // nao encontrado
+            $data =    array(	"resultado" =>  "ERRO",
+                "erro" => "Nao foi possivel encontrar nenhum time deste jogador ");
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+
+
+
+        }
+
+    }
 
 
 
@@ -47,8 +88,8 @@ class Teams{
 
 
 
-        $sql = "INSERT INTO times (time )
-                VALUES( '".$jsonRAW["time"]."' )
+        $sql = "INSERT INTO times (time , idowner)
+                VALUES( '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null")." )
                 RETURNING id";
 
         $this->con->executa($sql, 1);
