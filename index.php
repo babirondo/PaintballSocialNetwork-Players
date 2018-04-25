@@ -127,7 +127,7 @@ $app->get('/Teams', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 }  );
 
-$app->get('/SearchTeams', function ($request, $response, $args)  use ($app )   {
+$app->post('/SearchTeams/', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Teams.php");
 
     $cTeam = new Teams();

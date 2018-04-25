@@ -19,9 +19,28 @@ class Teams{
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
+        $filtros = null;
+        if ($jsonRAW["time"]) $filtros[] = " time ilike '%".$jsonRAW["time"]."%'";
+        if ($jsonRAW["localtreino"]) $filtros[] = " localtreino ilike '%".$jsonRAW["localtreino"]."%'";
+        if ($jsonRAW["nivelcompeticao"]) $filtros[] = " nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
+        if ($jsonRAW["treino"]["Segunda"]) $filtros[] = " treino_segunda ilike '%".$jsonRAW["treino"]["Segunda"]."%'";
+        if ($jsonRAW["treino"]["Terca"]) $filtros[] = " treino_terca ilike '%".$jsonRAW["treino"]["Terca"]."%'";
+        if ($jsonRAW["treino"]["Quarta"]) $filtros[] = " treino_quarta ilike '%".$jsonRAW["treino"]["Quarta"]."%'";
+        if ($jsonRAW["treino"]["Quinta"]) $filtros[] = " treino_quinta ilike '%".$jsonRAW["treino"]["Quinta"]."%'";
+        if ($jsonRAW["treino"]["Sexta"]) $filtros[] = " treino_sexta ilike '%".$jsonRAW["treino"]["Sexta"]."%'";
+        if ($jsonRAW["treino"]["Sabado"]) $filtros[] = " treino_sabado ilike '%".$jsonRAW["treino"]["Sabado"]."%'";
+        if ($jsonRAW["treino"]["Domingo"]) $filtros[] = " treino_domingo ilike '%".$jsonRAW["treino"]["Domingo"]."%'";
+        if ($jsonRAW["procurando"]["Snake"]) $filtros[] = " procurando_snake ilike '%".$jsonRAW["procurando"]["Snake"]."%'";
+        if ($jsonRAW["procurando"]["SnakeCorner"]) $filtros[] = " procurando_snakecorner ilike '%".$jsonRAW["procurando"]["SnakeCorner"]."%'";
+        if ($jsonRAW["procurando"]["BackCenter"]) $filtros[] = " procurando_backcenter ilike '%".$jsonRAW["procurando"]["BackCenter"]."%'";
+        if ($jsonRAW["procurando"]["Doritos"]) $filtros[] = " procurando_doritos ilike '%".$jsonRAW["procurando"]["Doritos"]."%'";
+        if ($jsonRAW["procurando"]["DoritosCorner"]) $filtros[] = " procurando_doritoscorner ilike '%".$jsonRAW["procurando"]["DoritosCorner"]."%'";
+        if ($jsonRAW["procurando"]["Coach"]) $filtros[] = " procurando_coach ilike '%".$jsonRAW["procurando"]["Coach"]."%'";
 
 
-        $sql = "SELECT * FROM times    ";
+
+        $sql = "SELECT * FROM times ".((is_array($filtros))?" WHERE ".implode( " and ",$filtros) :"") ;
+
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0 ){
@@ -49,6 +68,7 @@ class Teams{
                 $data["procurando_backcenter"]  = $this->con->dados["procurando_backcenter"];
                 $data["procurando_doritos"]  = $this->con->dados["procurando_doritos"];
                 $data["procurando_doritoscorner"]  = $this->con->dados["procurando_doritoscorner"];
+                $data["procurando_coach"]  = $this->con->dados["procurando_coach"];
                 $data["qtde_jogadores"]  = 4;
 
                 $output["TIMES"][] = $data;
@@ -147,6 +167,7 @@ class Teams{
                 ->withJson($data);
         }
 
+      //  echo "<PRE>";var_dump($jsonRAW); echo "</PRE>";
 
 
         $sql = "INSERT INTO times (time , idowner, localtreino, 
@@ -154,19 +175,19 @@ class Teams{
                                     treino_quarta, treino_quinta, treino_sexta,
                                     treino_sabado, treino_domingo, procurando_snake, 
                                     procurando_snakecorner, procurando_backcenter, procurando_doritoscorner,
-                                    procurando_doritos                                    
+                                    procurando_doritos , procurando_coach                              
                                     )
                 VALUES( 
                                 '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null").",'".$jsonRAW["localtreino"]."',
-                                '".$jsonRAW["nivelcompeticao"]."',".(($args["treino"]["Segunda"])? $args["treino"]["Segunda"] :"null").",".(($args["treino"]["Terca"])? $args["treino"]["Terca"] :"null").",
-                                ".(($args["treino"]["Quarta"])? $args["treino"]["Quarta"] :"null").",".(($args["treino"]["Quinta"])? $args["treino"]["Quinta"] :"null").",".(($args["treino"]["Sexta"])? $args["treino"]["Sexta"] :"null")."
-                                ,".(($args["treino"]["Sabado"])? $args["treino"]["Sabado"] :"null").",".(($args["treino"]["Domingo"])? $args["treino"]["Domingo"] :"null").",".(($args["procurando"]["Snake"])? $args["procurando"]["Snake"] :"null")."
-                                ,".(($args["procurando"]["SnakeCorner"])? $args["procurando"]["SnakeCorner"] :"null").",".(($args["procurando"]["BackCenter"])? $args["procurando"]["BackCenter"] :"null").",".(($args["procurando"]["DoritosCorner"])? $args["procurando"]["DoritosCorner"] :"null")."
-                                ,".(($args["procurando"]["Doritos"])? $args["procurando"]["Doritos"] :"null").",,".(($args["procurando"]["Coach"])? $args["procurando"]["Coach"] :"null")."
+                                '".$jsonRAW["nivelcompeticao"]."',".(($jsonRAW["treino"]["Segunda"])? "'".$jsonRAW["treino"]["Segunda"]."'" :"null").",".(($jsonRAW["treino"]["Terca"])? "'".$jsonRAW["treino"]["Terca"] ."'":"null").",
+                                ".(($jsonRAW["treino"]["Quarta"])? "'".$jsonRAW["treino"]["Quarta"]."'" :"null").",".(($jsonRAW["treino"]["Quinta"])? "'".$jsonRAW["treino"]["Quinta"]."'" :"null").",".(($jsonRAW["treino"]["Sexta"])? "'".$jsonRAW["treino"]["Sexta"]."'" :"null").",
+                                ".(($jsonRAW["treino"]["Sabado"])? "'".$jsonRAW["treino"]["Sabado"]."'" :"null").",".(($jsonRAW["treino"]["Domingo"])? "'".$jsonRAW["treino"]["Domingo"]."'" :"null").",".(($jsonRAW["procurando"]["Snake"])? "'".$jsonRAW["procurando"]["Snake"]."'" :"null").",
+                                ".(($jsonRAW["procurando"]["SnakeCorner"])? "'".$jsonRAW["procurando"]["SnakeCorner"]."'" :"null").",".(($jsonRAW["procurando"]["BackCenter"])? "'".$jsonRAW["procurando"]["BackCenter"]."'" :"null").",".(($jsonRAW["procurando"]["DoritosCorner"])? "'".$jsonRAW["procurando"]["DoritosCorner"]."'" :"null").",
+                                ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").",".(($jsonRAW["procurando"]["Coach"])? "'".$jsonRAW["procurando"]["Coach"]."'" :"null")."
                                                  
                  )
                 RETURNING id";
-
+//        echo "<PRE>$sql</PRE>";
         $this->con->executa($sql, 1);
 
 
