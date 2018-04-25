@@ -34,7 +34,25 @@ class Teams{
                 $data=null;
                 $data["nome"]  = $this->con->dados["time"];
                 $data["id"]  = $this->con->dados["id"];
+                $data["idowner"]  = $this->con->dados["idowner"];
+                $data["localtreino"]  = $this->con->dados["localtreino"];
+                $data["nivelcompeticao"]  = $this->con->dados["nivelcompeticao"];
+                $data["treino_segunda"]  = $this->con->dados["treino_segunda"];
+                $data["treino_terca"]  = $this->con->dados["treino_terca"];
+                $data["treino_quarta"]  = $this->con->dados["treino_quarta"];
+                $data["treino_quinta"]  = $this->con->dados["treino_quinta"];
+                $data["treino_sexta"]  = $this->con->dados["treino_sexta"];
+                $data["treino_sabado"]  = $this->con->dados["treino_sabado"];
+                $data["treino_domingo"]  = $this->con->dados["treino_domingo"];
+                $data["procurando_snake"]  = $this->con->dados["procurando_snake"];
+                $data["procurando_snakecorner"]  = $this->con->dados["procurando_snakecorner"];
+                $data["procurando_backcenter"]  = $this->con->dados["procurando_backcenter"];
+                $data["procurando_doritos"]  = $this->con->dados["procurando_doritos"];
+                $data["procurando_doritoscorner"]  = $this->con->dados["procurando_doritoscorner"];
+                $data["qtde_jogadores"]  = 4;
+
                 $output["TIMES"][] = $data;
+
             }
 
             return $response->withJson(array_merge($data_inicio, $output), 200)->withHeader('Content-Type', 'application/json');
@@ -131,8 +149,22 @@ class Teams{
 
 
 
-        $sql = "INSERT INTO times (time , idowner)
-                VALUES( '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null")." )
+        $sql = "INSERT INTO times (time , idowner, localtreino, 
+                                    nivelcompeticao, treino_segunda, treino_terca, 
+                                    treino_quarta, treino_quinta, treino_sexta,
+                                    treino_sabado, treino_domingo, procurando_snake, 
+                                    procurando_snakecorner, procurando_backcenter, procurando_doritoscorner,
+                                    procurando_doritos                                    
+                                    )
+                VALUES( 
+                                '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null").",'".$jsonRAW["localtreino"]."',
+                                '".$jsonRAW["nivelcompeticao"]."',".(($args["treino"]["Segunda"])? $args["treino"]["Segunda"] :"null").",".(($args["treino"]["Terca"])? $args["treino"]["Terca"] :"null").",
+                                ".(($args["treino"]["Quarta"])? $args["treino"]["Quarta"] :"null").",".(($args["treino"]["Quinta"])? $args["treino"]["Quinta"] :"null").",".(($args["treino"]["Sexta"])? $args["treino"]["Sexta"] :"null")."
+                                ,".(($args["treino"]["Sabado"])? $args["treino"]["Sabado"] :"null").",".(($args["treino"]["Domingo"])? $args["treino"]["Domingo"] :"null").",".(($args["procurando"]["Snake"])? $args["procurando"]["Snake"] :"null")."
+                                ,".(($args["procurando"]["SnakeCorner"])? $args["procurando"]["SnakeCorner"] :"null").",".(($args["procurando"]["BackCenter"])? $args["procurando"]["BackCenter"] :"null").",".(($args["procurando"]["DoritosCorner"])? $args["procurando"]["DoritosCorner"] :"null")."
+                                ,".(($args["procurando"]["Doritos"])? $args["procurando"]["Doritos"] :"null").",,".(($args["procurando"]["Coach"])? $args["procurando"]["Coach"] :"null")."
+                                                 
+                 )
                 RETURNING id";
 
         $this->con->executa($sql, 1);
