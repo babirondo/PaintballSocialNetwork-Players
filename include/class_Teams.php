@@ -9,6 +9,48 @@ class Teams{
     }
 
 
+
+    function getTimes(  $request, $response, $args , $jsonRAW){
+
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+
+        $sql = "SELECT * FROM times    ";
+        $this->con->executa($sql);
+
+        if ( $this->con->nrw > 0 ){
+            $contador = 0;
+
+            $data_inicio =   array(	"resultado" =>  "SUCESSO" );
+
+            while ($this->con->navega(0)){
+                $contador++;
+                $data=null;
+                $data["nome"]  = $this->con->dados["time"];
+                $data["id"]  = $this->con->dados["id"];
+                $output["TIMES"][] = $data;
+            }
+
+            return $response->withJson(array_merge($data_inicio, $output), 200)->withHeader('Content-Type', 'application/json');
+        }
+        else {
+
+            // nao encontrado
+            $data =    array(	"resultado" =>  "ERRO",
+                "erro" => "Nenhum time encontrado");
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+    }
     function getMyTeams(  $request, $response, $args ){
 
         if (!$this->con->conectado){
@@ -21,6 +63,7 @@ class Teams{
 
 
         $sql = "SELECT * FROM times  WHERE idowner = '".$args['idusuario']."'  ";
+
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0 ){

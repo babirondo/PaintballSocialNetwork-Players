@@ -47,7 +47,7 @@ $app->get('/Players/{idusuario}', function ($request, $response, $args)  use ($a
 
 
 
-$app->post('/Players/{idusuario}/Team', function ($request, $response, $args)  use ($app )   {
+$app->post('/Players/Experiences/', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
 
     $cPlayer = new Players();
@@ -118,6 +118,14 @@ $app->post('/Teams', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 }  );
 
+$app->get('/Teams', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->getTimes($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+}  );
 
 $app->run();
 
