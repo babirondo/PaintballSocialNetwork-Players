@@ -20,9 +20,13 @@ class Teams{
                 ->withJson($data);
         }
         $filtros = null;
+//        var_dump($args );
+
+        if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
         if ($jsonRAW["time"]) $filtros[] = " time ilike '%".$jsonRAW["time"]."%'";
         if ($jsonRAW["localtreino"]) $filtros[] = " localtreino ilike '%".$jsonRAW["localtreino"]."%'";
         if ($jsonRAW["nivelcompeticao"]) $filtros[] = " nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
+
         if ($jsonRAW["treino"]["Segunda"]) $filtros[] = " treino_segunda ilike '%".$jsonRAW["treino"]["Segunda"]."%'";
         if ($jsonRAW["treino"]["Terca"]) $filtros[] = " treino_terca ilike '%".$jsonRAW["treino"]["Terca"]."%'";
         if ($jsonRAW["treino"]["Quarta"]) $filtros[] = " treino_quarta ilike '%".$jsonRAW["treino"]["Quarta"]."%'";
@@ -30,6 +34,7 @@ class Teams{
         if ($jsonRAW["treino"]["Sexta"]) $filtros[] = " treino_sexta ilike '%".$jsonRAW["treino"]["Sexta"]."%'";
         if ($jsonRAW["treino"]["Sabado"]) $filtros[] = " treino_sabado ilike '%".$jsonRAW["treino"]["Sabado"]."%'";
         if ($jsonRAW["treino"]["Domingo"]) $filtros[] = " treino_domingo ilike '%".$jsonRAW["treino"]["Domingo"]."%'";
+
         if ($jsonRAW["procurando"]["Snake"]) $filtros[] = " procurando_snake ilike '%".$jsonRAW["procurando"]["Snake"]."%'";
         if ($jsonRAW["procurando"]["SnakeCorner"]) $filtros[] = " procurando_snakecorner ilike '%".$jsonRAW["procurando"]["SnakeCorner"]."%'";
         if ($jsonRAW["procurando"]["BackCenter"]) $filtros[] = " procurando_backcenter ilike '%".$jsonRAW["procurando"]["BackCenter"]."%'";
@@ -39,7 +44,7 @@ class Teams{
 
 
 
-        $sql = "SELECT * FROM times ".((is_array($filtros))?" WHERE ".implode( " and ",$filtros) :"") ;
+        $sql = "SELECT * FROM times ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
 
         $this->con->executa($sql);
 
@@ -55,6 +60,7 @@ class Teams{
                 $data["id"]  = $this->con->dados["id"];
                 $data["idowner"]  = $this->con->dados["idowner"];
                 $data["localtreino"]  = $this->con->dados["localtreino"];
+                $data["logotime"]  = $this->con->dados["logotime"];
                 $data["nivelcompeticao"]  = $this->con->dados["nivelcompeticao"];
                 $data["treino_segunda"]  = $this->con->dados["treino_segunda"];
                 $data["treino_terca"]  = $this->con->dados["treino_terca"];

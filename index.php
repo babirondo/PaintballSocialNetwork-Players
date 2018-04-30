@@ -118,6 +118,14 @@ $app->post('/Teams', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 }  );
 
+$app->get('/Teams/{pesquisa}', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->getTimes($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+}  );
 $app->get('/Teams', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Teams.php");
 
