@@ -4,19 +4,21 @@ set_time_limit(2);
 //error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 class Globais{
 
-
+    public $env;
 
     function __construct( ){
 
+        if ( $_SERVER["HOME"] == "/home/pb")
+            $this->env = "prod";
+        else
+            $this->env = "local";
 
-        $env = "prod";
-        //$env = "local";zzzz
+        switch($this->env){
 
-        switch($env){
             case("local");
                 $servidor= "http://localhost:81";
                 $this->localhost = "localhost";
-                $this->username = "spostgres";
+                $this->username = "postgres";
                 $this->password = "bruno";
                 $this->db ="Usuarios";
                 $this->verbose=1;
