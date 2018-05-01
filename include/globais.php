@@ -8,7 +8,7 @@ class Globais{
 
     function __construct( ){
 
-        if ( $_SERVER["HOME"] == "/home/pb")
+        if ( $_SERVER["CONTEXT_DOCUMENT_ROOT"] == "/var/www/html")
             $this->env = "prod";
         else
             $this->env = "local";
