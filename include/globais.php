@@ -10,7 +10,7 @@ class Globais{
 
 
         $env = "prod";
-        //$env = "local";
+        //$env = "local";zzzz
 
         switch($env){
             case("local");
