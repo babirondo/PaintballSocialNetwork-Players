@@ -9,28 +9,27 @@ class Globais{
     function __construct( ){
 
 
-        //$Authentication_folder = "PaintballSocialNetwork-AuthAPI/";
-        //$Authentication_port = ":81/";
-        //$this->Authentication_endpoint = "http://localhost".$Authentication_port.$Authentication_folder."Auth";
-        $this->adicionar_time = "http://localhost:81/PaintballSocialNetwork-Players/Teams";
+        $env = "prod";
+        //$env = "local";
 
-        $this->sourcecode = "local"; //local ou prod
-        $this->banco = "prod";//dev ou prod
-        $this->environment = "mac"; //mac ou windows
+        switch($env){
+            case("local");
+                $servidor= "http://localhost:81";
+                $this->localhost = "localhost";
+                $this->username = "spostgres";
+                $this->password = "bruno";
+                $this->db ="Usuarios";
+                $this->verbose=1;
+                break;
 
-        if ($this->sourcecode == "prod"){
-        }
-        else if ($this->sourcecode == "local"){
-        }
-
-        if ($this->banco == "prod"){
-            $this->localhost = "localhost";
-            $this->username = "postgres";
-            $this->password = "bruno";
-            $this->db ="Usuarios";
-            $this->verbose=1;
-        }
-        else if ($this->banco == "dev"){
+            case("prod");
+                $servidor= "http://pb.mundivox.rio";
+                $this->localhost = "localhost";
+                $this->username = "pb";
+                $this->password = "Rodr1gues";
+                $this->db ="usuarios";
+                $this->verbose=1;
+                break;
 
         }
 
