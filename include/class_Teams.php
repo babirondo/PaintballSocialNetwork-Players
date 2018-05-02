@@ -22,6 +22,7 @@ class Teams{
         $filtros = null;
 //        var_dump($args );
 
+        if ($jsonRAW["idtimes"]) $filtros[] = " id IN (".$jsonRAW["idtimes"].")";
         if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
         if ($jsonRAW["time"]) $filtros[] = " time ilike '%".$jsonRAW["time"]."%'";
         if ($jsonRAW["localtreino"]) $filtros[] = " localtreino ilike '%".$jsonRAW["localtreino"]."%'";
@@ -56,6 +57,7 @@ class Teams{
             while ($this->con->navega(0)){
                 $contador++;
                 $data=null;
+
                 $data["nome"]  = $this->con->dados["time"];
                 $data["id"]  = $this->con->dados["id"];
                 $data["idowner"]  = $this->con->dados["idowner"];
@@ -75,9 +77,10 @@ class Teams{
                 $data["procurando_doritos"]  = $this->con->dados["procurando_doritos"];
                 $data["procurando_doritoscorner"]  = $this->con->dados["procurando_doritoscorner"];
                 $data["procurando_coach"]  = $this->con->dados["procurando_coach"];
+
                 $data["qtde_jogadores"]  = 4;
 
-                $output["TIMES"][] = $data;
+                $output["TIMES"][$this->con->dados["id"]] = $data;
 
             }
 

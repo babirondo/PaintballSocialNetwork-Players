@@ -84,8 +84,11 @@ class Players{
         }
 
 
-        $sql = "SELECT *, to_char(  inicio, 'mm/yyyy') inicio_formatado, to_char(  fim, 'mm/yyyy') fim_formatado
-                FROM jogador_times  WHERE id_jogador = '".$args['idusuario']."' ORDER BY fim  DESC  ";
+        $sql = "SELECT jt.*, to_char(  jt.inicio, 'mm/yyyy') inicio_formatado, to_char(  jt.fim, 'mm/yyyy') fim_formatado, j.*
+                FROM jogador_times jt  
+                  INNER JOIN jogadores j ON (j.id_jogador = jt.id_jogador)
+                WHERE jt.id_jogador = '".$args['idusuario']."' 
+                ORDER BY jt.fim  DESC  ";
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0 ){
@@ -95,14 +98,11 @@ class Players{
 
             while ($this->con->navega(0)){
                 $contador++;
-                $data["TIMES"][$this->con->dados["id"]]["idtime"] = $this->con->dados["id_time"];
-                $data["TIMES"][$this->con->dados["id"]]["inicio"] = $this->con->dados["inicio_formatado"];
-                $data["TIMES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . $this->con->dados["fim_formatado"];
-                $data["TIMES"][$this->con->dados["id"]]["Cidade"] = "Sao Paulo";
-                $data["TIMES"][$this->con->dados["id"]]["Letra"] = "E";
-                $data["TIMES"][$this->con->dados["id"]]["LogoTime"] = "https://cdn0.iconfinder.com/data/icons/extreme-game-for-man/229/tough-outdoor-activities001-512.png";
-                $data["TIMES"][$this->con->dados["id"]]["Resultados"] = $this->con->dados["resultados"];
-                $data["TIMES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["idtime"] = $this->con->dados["id_time"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["inicio"] = $this->con->dados["inicio_formatado"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . $this->con->dados["fim_formatado"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["Resultados"] = $this->con->dados["resultados"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
             }
 
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
@@ -144,16 +144,16 @@ class Players{
             $this->con->navega(0);
 
             $data =   array(	"resultado" =>  "SUCESSO" );
-            $data["nome"] = $this->con->dados["nome"];
-            $data["idade"] = $this->con->dados["idade"];
-            $data["cidade"] = $this->con->dados["cidade"];
-            $data["foto"] = $this->con->dados["foto"];
-            $data["snake"] = $this->con->dados["snake"];
-            $data["snakecorner"] = $this->con->dados["snakecorner"];
-            $data["backcenter"] = $this->con->dados["backcenter"];
-            $data["coach"] = $this->con->dados["coach"];
-            $data["doritos"] = $this->con->dados["doritos"];
-            $data["doritoscorner"] = $this->con->dados["doritoscorner"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["nome"] = $this->con->dados["nome"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["idade"] = $this->con->dados["idade"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["cidade"] = $this->con->dados["cidade"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["foto"] = $this->con->dados["foto"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["snake"] = $this->con->dados["snake"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["snakecorner"] = $this->con->dados["snakecorner"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["backcenter"] = $this->con->dados["backcenter"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["coach"] = $this->con->dados["coach"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["doritos"] = $this->con->dados["doritos"];
+            $data["JOGADORES"][$this->con->dados["id_jogador"]]["doritoscorner"] = $this->con->dados["doritoscorner"];
 
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
         }

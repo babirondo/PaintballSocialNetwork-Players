@@ -118,6 +118,9 @@ $app->post('/Teams', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 }  );
 
+
+
+// BUSCAR DADOS DE UM TIME, POR GET, ROTA OU POST
 $app->get('/Teams/{pesquisa}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Teams.php");
 
