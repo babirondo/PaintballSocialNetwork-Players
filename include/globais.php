@@ -11,9 +11,10 @@ class Globais{
 
         if ( $_SERVER["CONTEXT_DOCUMENT_ROOT"] == "/var/www/html")
             $this->banco = $this->env = "prod";
-        else
-            $this->banco = $this->env = "local";
-        //$this->banco = "prod";
+        else{
+            $this->banco= "prod";
+            $this->env = "local";
+        }
         switch($this->env){
 
             case("local");
