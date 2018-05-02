@@ -185,7 +185,7 @@ class Players{
 
         IF (!is_array ($jsonRAW)  ) {
             $data =  array(	"resultado" =>  "ERRO",
-                    "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
+                    "erro" => "JSON zuado -  ".$request->getParsedBody().var_export($jsonRAW, true) );
 
             return $response->withStatus(500)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
@@ -219,7 +219,8 @@ class Players{
         if ( $this->con->res == 1 ){
 
 
-            $data =   array(	"resultado" =>  "SUCESSO" );
+            $data =   array(	"resultado" =>  "SUCESSO" ,
+                                "debug" =>  $sql );
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
         }
         else {
