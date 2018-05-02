@@ -106,7 +106,7 @@ class Teams{
         }
 
 
-        $sql = "SELECT * FROM times  WHERE idowner = '".$args['idusuario']."'  ";
+        $sql = "SELECT * FROM times  WHERE id IN   (select id_time from jogador_times where  id_jogador= '".$args['idusuario']."')  ";
 
         $this->con->executa($sql);
 
