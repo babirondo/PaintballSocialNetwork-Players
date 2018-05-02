@@ -118,6 +118,7 @@ class Teams{
             while ($this->con->navega(0)){
                 $contador++;
                 $data["TIMES"][$this->con->dados["id"]]["time"] = $this->con->dados["time"];
+                $data["TIMES"][$this->con->dados["id"]]["logo"] = $this->con->dados["logotime"];
 
             }
 
@@ -173,15 +174,21 @@ class Teams{
                 ->withJson($data);
         }
 
-      //  echo "<PRE>";var_dump($jsonRAW); echo "</PRE>";
+        echo "<PRE>";var_dump($jsonRAW); echo "</PRE>";
 
+        if ($jsonRAW["foto"]["tmp_name"]){
+            $fotoSalvar = base64_encode(file_get_contents( $jsonRAW["foto"]["tmp_name"] ));
+            $sql_complemento = " 'data:".$jsonRAW["foto"]["type"].";base64,".$fotoSalvar."' ";
+        }
+        else
+            $sql_complemento = " null ";
 
         $sql = "INSERT INTO times (time , idowner, localtreino, 
                                     nivelcompeticao, treino_segunda, treino_terca, 
                                     treino_quarta, treino_quinta, treino_sexta,
                                     treino_sabado, treino_domingo, procurando_snake, 
                                     procurando_snakecorner, procurando_backcenter, procurando_doritoscorner,
-                                    procurando_doritos , procurando_coach                              
+                                    procurando_doritos , procurando_coach   , logotime                           
                                     )
                 VALUES( 
                                 '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null").",'".$jsonRAW["localtreino"]."',
@@ -189,11 +196,11 @@ class Teams{
                                 ".(($jsonRAW["treino"]["Quarta"])? "'".$jsonRAW["treino"]["Quarta"]."'" :"null").",".(($jsonRAW["treino"]["Quinta"])? "'".$jsonRAW["treino"]["Quinta"]."'" :"null").",".(($jsonRAW["treino"]["Sexta"])? "'".$jsonRAW["treino"]["Sexta"]."'" :"null").",
                                 ".(($jsonRAW["treino"]["Sabado"])? "'".$jsonRAW["treino"]["Sabado"]."'" :"null").",".(($jsonRAW["treino"]["Domingo"])? "'".$jsonRAW["treino"]["Domingo"]."'" :"null").",".(($jsonRAW["procurando"]["Snake"])? "'".$jsonRAW["procurando"]["Snake"]."'" :"null").",
                                 ".(($jsonRAW["procurando"]["SnakeCorner"])? "'".$jsonRAW["procurando"]["SnakeCorner"]."'" :"null").",".(($jsonRAW["procurando"]["BackCenter"])? "'".$jsonRAW["procurando"]["BackCenter"]."'" :"null").",".(($jsonRAW["procurando"]["DoritosCorner"])? "'".$jsonRAW["procurando"]["DoritosCorner"]."'" :"null").",
-                                ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").",".(($jsonRAW["procurando"]["Coach"])? "'".$jsonRAW["procurando"]["Coach"]."'" :"null")."
+                                ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").",".(($jsonRAW["procurando"]["Coach"])? "'".$jsonRAW["procurando"]["Coach"]."'" :"null").", $sql_complemento
                                                  
                  )
                 RETURNING id";
-//        echo "<PRE>$sql</PRE>";
+        echo "<PRE>$sql</PRE>";
         $this->con->executa($sql, 1);
 
 

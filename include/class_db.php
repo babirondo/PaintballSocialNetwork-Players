@@ -3,13 +3,14 @@
 
 namespace raiz;
 use PDO;
-set_time_limit( 15 );
 error_reporting(E_ALL ^ E_DEPRECATED ^E_NOTICE);
 class db
 {
     function conecta()
     {
         require_once("include/globais.php");
+        set_time_limit( 15 );
+
         $this->globais = new Globais();
         //	echo "\n Conectando no banco: ".$this->globais->banco ;
         try {
