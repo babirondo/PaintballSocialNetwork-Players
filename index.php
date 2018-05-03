@@ -39,7 +39,7 @@ $app->get('/Players/{idusuario}', function ($request, $response, $args)  use ($a
     require_once("include/class_Players.php");
 
     $cPlayer = new Players();
-    $retorno = $cPlayer->getJogador($request, $response, $args  );
+    $retorno = $cPlayer->getJogador($request, $response, $args , null );
 
     return $retorno;
 
@@ -118,6 +118,15 @@ $app->post('/Teams', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 }  );
 
+$app->post('/SearchPlayers/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+//    $retorno = $cPlayer->getTimes($request, $response, $args, $request->getParsedBody() );
+    $retorno = $cPlayer->getJogador($request, $response, $args, $request->getParsedBody()  );
+
+    return $retorno;
+}  );
 
 
 // BUSCAR DADOS DE UM TIME, POR GET, ROTA OU POST
