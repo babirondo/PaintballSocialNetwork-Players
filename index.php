@@ -107,6 +107,14 @@ $app->post('/{idusuario}/Teams/', function ($request, $response, $args)  use ($a
 
     return $retorno;
 }  );
+$app->put('/{idusuario}/Teams/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Teams.php");
+
+    $cTeam = new Teams();
+    $retorno = $cTeam->Alterar_Time($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+}  );
 
 
 $app->post('/Teams', function ($request, $response, $args)  use ($app )   {

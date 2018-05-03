@@ -137,6 +137,7 @@ class Players{
 
         //if ($jsonRAW["idtimes"]) $filtros[] = " id IN (".$jsonRAW["idtimes"].")";
         if ($args["idusuario"]) $filtros[] = " id_jogador = '".$args["idusuario"]."'";
+        if ($jsonRAW["nome"]) $filtros[] = " nome ilike '%".$jsonRAW["nome"]."%'";
         if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
         //if ($jsonRAW["time"]) $filtros[] = " time ilike '%".$jsonRAW["time"]."%'";
         if ($jsonRAW["localtreino"]) $filtros[] = " cidade ilike '%".$jsonRAW["localtreino"]."%'";
