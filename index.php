@@ -79,6 +79,16 @@ $app->get('/Players/{idusuario}/Experiences', function ($request, $response, $ar
 
 }  );
 
+$app->put('/Players/{idusuario}/Experiences/{idexperience}/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+    $retorno = $cPlayer->AlterarExperience($request, $response, $args ,   $request->getParsedBody()  );
+
+    return $retorno;
+
+}  );
+
 $app->delete('/Players/{idusuariologado}/Experiences/{idexperiencia}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
 

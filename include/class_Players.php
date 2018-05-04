@@ -84,7 +84,9 @@ class Players{
         }
 
 
-        $sql = "SELECT jt.*, to_char(  jt.inicio, 'mm/yyyy') inicio_formatado, to_char(  jt.fim, 'mm/yyyy') fim_formatado, j.*
+        $sql = "SELECT j.*, jt.*, 
+                        to_char(  jt.inicio, 'mm/yyyy') inicio_formatado, to_char(  jt.fim, 'mm/yyyy') fim_formatado,
+                        to_char(  jt.inicio, 'dd/mm/yyyy') inicio_ddmmyyyy, to_char(  jt.fim, 'dd/mm/yyyy') fim_ddmmyyyy
                 FROM jogador_times jt  
                   INNER JOIN jogadores j ON (j.id_jogador = jt.id_jogador)
                 WHERE jt.id_jogador = '".$args['idusuario']."' 
@@ -103,6 +105,8 @@ class Players{
                 $data["EXPERIENCES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . $this->con->dados["fim_formatado"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["Resultados"] = $this->con->dados["resultados"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["inicio_ddmmyyyy"] = $this->con->dados["inicio_ddmmyyyy"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["fim_ddmmyyyy"] = $this->con->dados["fim_ddmmyyyy"];
             }
 
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
@@ -370,6 +374,44 @@ class Players{
 
     }
 
+    function CriarTime($idtime="", $time=""){
+        require_once("include/class_api.php");
+        require_once("include/globais.php");
+
+        $API = new class_API();
+        $Globais = new Globais();
+
+        if (!$idtime ){
+            $array_post = null;
+            $array_post['time'] = $time;
+
+            $query_API = $API->CallAPI("POST", $Globais->adicionar_time , json_encode($array_post));
+
+            if ($query_API){
+                if ($query_API["resultado"] == "SUCESSO") {
+                    $mensagem_retorno =  "Dados Salvos com sucesso";
+                    return $query_API["idtime"];
+                }
+                else{
+
+                    $data =  array(	"resultado" =>  "ERRO",
+                        "erro" => "Nao foi possivel criar o time"  );
+
+                    return false;
+                }
+            }
+            else{
+                $data =  array(	"resultado" =>  "ERRO",
+                    "erro" => "Nao foi possivel criar o time"  );
+
+                return false;
+            }
+        }
+        else
+            return $idtime;
+
+    }
+
     function Adicionar_time_ao_jogador(  $request, $response, $args,   $jsonRAW){
 
         if (!$this->con->conectado){
@@ -392,59 +434,22 @@ class Players{
         //TODO: criticar fim nulo e trim
         //TODO: criticar tipo data no campo inicio, formato BR ou gringo
 
-                require_once("include/class_api.php");
-                require_once("include/globais.php");
+        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"]);
+        if (!$idtime){
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "nao foi possivel criar o time" );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
 
-                $API = new class_API();
-                $Globais = new Globais();
-
-                if (!$jsonRAW["idtime"]){
-                    $array_post = null;
-                    $array_post['time'] = $jsonRAW["time"];
-
-
-                    $query_API = $API->CallAPI("POST", $Globais->adicionar_time , json_encode($array_post));
+        }
 
 
-                    if ($query_API){
-                        if ($query_API["resultado"] == "SUCESSO") {
-                            $mensagem_retorno =  "Dados Salvos com sucesso";
-
-
-
-                            $idtime = $query_API["idtime"];
-                        }
-                        else{
-
-                            $data =  array(	"resultado" =>  "ERRO",
-                                "erro" => "Nao foi possivel criar o time"  );
-
-                            return $response->withStatus(500)
-                                ->withHeader('Content-type', 'application/json;charset=utf-8')
-                                ->withJson($data);
-
-                        }
-
-                    }
-                    else{
-                        $data =  array(	"resultado" =>  "ERRO",
-                            "erro" => "Nao foi possivel criar o time"  );
-
-                        return $response->withStatus(500)
-                            ->withHeader('Content-type', 'application/json;charset=utf-8')
-                            ->withJson($data);
-                    }
-
-
-                }
-                else
-                    $idtime = $jsonRAW["idtime"];
-
-
-        $fim = (($jsonRAW["fim"])?"'".$jsonRAW["fim"]."'":" null ");
+        $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":" null ");
+        $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
 
         $sql = "INSERT INTO jogador_times (id_jogador, id_time, inicio, fim, resultados)
-                VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",'".$jsonRAW["inicio"]."',$fim, '".$jsonRAW["resultados"]."')";
+                VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')";
         $this->con->executa($sql);
 
         if ( $this->con->res == 1 ){
@@ -467,5 +472,69 @@ class Players{
         }
 
     }
+
+
+    function AlterarExperience(  $request, $response, $args,   $jsonRAW){
+
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+        IF (!is_array ($jsonRAW)  ) {
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
+
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"]);
+        if (!$idtime){
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "nao foi possivel criar o time" );
+            return $response->withStatus(500)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+
+        }
+
+        $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":" null ");
+        $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
+
+        $sql = "UPDATE jogador_times SET  
+                     id_time = $idtime,
+                     inicio = $inicio, 
+                     fim = ".$fim.", 
+                     resultados = '".$jsonRAW["resultados"]."'
+                 WHERE id = '".$args["idexperience"]."'";
+        $this->con->executa($sql);
+
+        if ( $this->con->res == 1 ){
+
+            $data =   array(	"resultado" =>  "SUCESSO" );
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+        }
+        else {
+
+            // nao encontrado
+            $data =    array(	"resultado" =>  "ERRO",
+                "erro" => "Nao foi possivel alterar os dados - $mensagem_retorno - $sql");
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+
+
+
+        }
+
+    }
+
+
 
 }
