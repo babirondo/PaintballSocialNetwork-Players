@@ -3,9 +3,13 @@ namespace raiz;
 set_time_limit( 2 );
 class Players{
     function __construct( ){
-        require("include/class_db.php");
+        require_once("include/class_db.php");
         $this->con = new db();
         $this->con->conecta();
+
+        require_once("include/class_Experiences.php");
+       $this->Experience = new Experiences();
+
     }
 
     function getJogadoresbyTeam (  $request, $response, $args , $jsonRAW){
@@ -107,6 +111,9 @@ class Players{
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["inicio_ddmmyyyy"] = $this->con->dados["inicio_ddmmyyyy"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim_ddmmyyyy"] = $this->con->dados["fim_ddmmyyyy"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["RESULTADOS"] = $this->Experience->getResultados($this->con->dados["id"]);
+
+
             }
 
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
@@ -444,15 +451,24 @@ class Players{
 
         }
 
-
         $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":" null ");
         $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
 
         $sql = "INSERT INTO jogador_times (id_jogador, id_time, inicio, fim, resultados)
-                VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')";
-        $this->con->executa($sql);
+                VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')
+                RETURNING id";
+        $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){
+            $data["idexperience"] = $this->con->dados["id"];
+
+
+            if (is_array($jsonRAW["idevento"])){
+                foreach ($jsonRAW["idevento"] as $idRes => $event){
+                    $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                }
+            }
+
 
             $data =   array(	"resultado" =>  "SUCESSO" );
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
@@ -515,6 +531,17 @@ class Players{
         $this->con->executa($sql);
 
         if ( $this->con->res == 1 ){
+
+            if (is_array($jsonRAW["idevento"]) ) {
+
+                foreach ($jsonRAW["idevento"] as $idResultado => $evento){
+
+                    if ( $idResultado > 0)
+                        $this->Experience->AlterarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $idResultado);
+                    else
+                        $this->Experience->AdicionarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $args["idexperience"]);
+                }
+            }
 
             $data =   array(	"resultado" =>  "SUCESSO" );
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
