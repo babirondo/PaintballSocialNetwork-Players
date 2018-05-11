@@ -11,6 +11,9 @@ class db
         require_once("include/globais.php");
         set_time_limit( 15 );
 
+
+        //echo "Conectando no banco<BR>";
+
         $this->globais = new Globais();
         //	echo "\n Conectando no banco: ".$this->globais->banco ;
         try {

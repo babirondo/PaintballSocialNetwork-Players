@@ -39,7 +39,7 @@ $app->get('/Players/{idusuario}', function ($request, $response, $args)  use ($a
     require_once("include/class_Players.php");
 
     $cPlayer = new Players();
-    $retorno = $cPlayer->getJogador($request, $response, $args , null );
+    $retorno = $cPlayer->getJogadorAPI($request, $response, $args , $request->getParsedBody() );
 
     return $retorno;
 
@@ -141,7 +141,7 @@ $app->post('/SearchPlayers/', function ($request, $response, $args)  use ($app )
 
     $cPlayer = new Players();
 //    $retorno = $cPlayer->getTimes($request, $response, $args, $request->getParsedBody() );
-    $retorno = $cPlayer->getJogador($request, $response, $args, $request->getParsedBody()  );
+    $retorno = $cPlayer->getJogadorAPI($request, $response, $args, $request->getParsedBody()  );
 
     return $retorno;
 }  );

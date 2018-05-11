@@ -8,9 +8,9 @@ class Players{
         $this->con->conecta();
 
         require_once("include/class_Experiences.php");
-       $this->Experience = new Experiences();
-
+        $this->Experience = new Experiences();
     }
+
 
     function getJogadoresbyTeam (  $request, $response, $args , $jsonRAW){
 
@@ -23,9 +23,9 @@ class Players{
         }
 
 
-        $sql = "SELECT jt.id_time,j.*
+        $sql = "SELECT jt.id_time
                 FROM jogador_times  jt
-                     inner join jogadores j ON (j.id_jogador = jt.id_jogador)
+                    
                 WHERE jt.id_time     IN (  ".$jsonRAW['idtime']." )    ";
 //echo $sql;
         $this->con->executa($sql);
@@ -37,6 +37,11 @@ class Players{
 
             while ($this->con->navega(0)){
                 $contador++;
+
+
+
+                $data["TIMES"][$this->con->dados["id_time"]] = $this->getJogador(null,$jsonRAW);
+                /*
                 $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["nome"] = $this->con->dados["nome"];
                 $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["idade"] = $this->con->dados["idade"];
                 $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["cidade"] = $this->con->dados["cidade"];
@@ -55,7 +60,7 @@ class Players{
                                                             . (($this->con->dados["coach"]!="-")?"Coach":""). " "
                                                             . (($this->con->dados["doritos"]!="-")?"Doritos":""). " "
                                                             . (($this->con->dados["doritoscorner"]!="-")?"Doritos Corner":"");
-
+*/
             }
 
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
@@ -135,22 +140,16 @@ class Players{
     }
 
 
+    function getJogador(  $args , $jsonRAW){
 
-    function getJogador(  $request, $response, $args , $jsonRAW){
 
-        if (!$this->con->conectado){
-            $data =   array(	"resultado" =>  "ERRO",
-                "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
-                ->withHeader('Content-type', 'application/json;charset=utf-8')
-                ->withJson($data);
-        }
 
         //if ($jsonRAW["idtimes"]) $filtros[] = " id IN (".$jsonRAW["idtimes"].")";
         if ($args["idusuario"]) $filtros[] = " id_jogador = '".$args["idusuario"]."'";
+        if ($args["idjogador"]) $filtros[] = " id_jogador = '".$args["idjogador"]."'";
         if ($jsonRAW["nome"]) $filtros[] = " nome ilike '%".$jsonRAW["nome"]."%'";
         if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
-        //if ($jsonRAW["time"]) $filtros[] = " time ilike '%".$jsonRAW["time"]."%'";
+        if ($jsonRAW["idtime"]) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (".$jsonRAW["idtime"].") )";
         if ($jsonRAW["localtreino"]) $filtros[] = " cidade ilike '%".$jsonRAW["localtreino"]."%'";
         if ($jsonRAW["nivelcompeticao"]) $filtros[] = " nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
 
@@ -173,19 +172,25 @@ class Players{
 
 
         $sql = "SELECT * FROM jogadores  ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
-
+        //if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0  ){
 
-
-            $data =   array(	"resultado" =>  "SUCESSO" );
-
+            if ($args["nao_calcula_skill"] == null ) {
+                require_once("include/class_Score.php");
+                $this->Score = new Score();
+            }
             while ($this->con->navega(0)) {
+                if ($args["nao_calcula_skill"] == null ){
+                    $data["JOGADORES"][$this->con->dados["id_jogador"]]["skill"] = $this->Score->calculaskill($this->con->dados["id_jogador"]);
+                }
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["nome"] = $this->con->dados["nome"];
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["idade"] = $this->con->dados["idade"];
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["cidade"] = $this->con->dados["cidade"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["foto"] = $this->con->dados["foto"];
+                $data["JOGADORES"][$this->con->dados["id_jogador"]]["playsince"] = $this->con->dados["playsince"];
+            //    $data["JOGADORES"][$this->con->dados["id_jogador"]]["foto"] = $this->con->dados["foto"];
+
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["snake"] = $this->con->dados["snake"];
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["snakecorner"] = $this->con->dados["snakecorner"];
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["backcenter"] = $this->con->dados["backcenter"];
@@ -229,22 +234,35 @@ class Players{
                 $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Domingo"] = trim($this->con->dados["treino_domingo"]);
 
             }
-            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+            return $data;
         }
         else {
+            return false;
+        }
+    }
 
-            // nao encontrado
-            $data =    array(	"resultado" =>  "ERRO",
-                "erro" => "Nao foi possivel encontrar dados deste jogador ");
 
-            return $response->withStatus(200)
+    function getJogadorAPI(  $request, $response, $args , $jsonRAW){
+
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(500)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
-
-
-
         }
 
+        $data = $this->getJogador(   $args , $jsonRAW);
+
+        if (is_array($data)){
+            $data["resultado"] = "SUCESSO";
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+        }
+        else{
+            $data["resultado"] = "ERRO";
+            return $response->withJson($data, 404)->withHeader('Content-Type', 'application/json');
+
+        }
     }
 
     function Atualizar_Jogador(  $request, $response, $args,   $jsonRAW){
