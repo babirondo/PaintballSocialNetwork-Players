@@ -87,7 +87,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(509)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -132,11 +132,7 @@ class Players{
             return $response->withStatus(200)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
-
-
-
         }
-
     }
 
 
@@ -402,7 +398,7 @@ class Players{
 
     }
 
-    function CriarTime($idtime="", $time=""){
+    function CriarTime($idtime="", $time="", $idjogador=null ){
         require_once("include/class_api.php");
         require_once("include/globais.php");
 
@@ -413,7 +409,12 @@ class Players{
             $array_post = null;
             $array_post['time'] = $time;
 
-            $query_API = $API->CallAPI("POST", $Globais->adicionar_time , json_encode($array_post));
+
+            $trans = null;$trans = array(":idjogadorlogado" => $idjogador);
+
+            $query_API = $API->CallAPI("POST",  strtr($Globais->adicionar_time, $trans)  , json_encode($array_post));
+
+          //  var_dump($query_API);
 
             if ($query_API){
                 if ($query_API["resultado"] == "SUCESSO") {
@@ -445,7 +446,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(509)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -454,7 +455,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(509)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -462,11 +463,11 @@ class Players{
         //TODO: criticar fim nulo e trim
         //TODO: criticar tipo data no campo inicio, formato BR ou gringo
 
-        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"]);
+        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $jsonRAW['idjogadorlogado']);
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "nao foi possivel criar o time" );
-            return $response->withStatus(509)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
 
@@ -478,6 +479,7 @@ class Players{
         $sql = "INSERT INTO jogador_times (id_jogador, id_time, inicio, fim, resultados)
                 VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')
                 RETURNING id";
+        //echo $sql;exit;
         $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){
@@ -503,9 +505,6 @@ class Players{
             return $response->withStatus(200)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
-
-
-
         }
 
     }
@@ -576,13 +575,6 @@ class Players{
             return $response->withStatus(200)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
-
-
-
         }
-
     }
-
-
-
 }

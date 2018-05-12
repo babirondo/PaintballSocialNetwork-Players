@@ -1,6 +1,6 @@
 <?php
 namespace GuzzleHttp;
-
+set_time_limit(10);
 use GuzzleHttp\Cookie\CookieJar;
 use GuzzleHttp\Promise;
 use GuzzleHttp\Psr7;

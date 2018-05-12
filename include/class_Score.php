@@ -45,35 +45,38 @@ class Score{
 
         if (is_array($CampeonatosEventos["EXPERIENCES"] )){
             foreach ($CampeonatosEventos["EXPERIENCES"] as $time ){
-                foreach ($time["RESULTADOS"] as $idresultado => $competicao_jogada){
-                    if ($debug == 1)
-                        echo "\n  ";
-                    $XP_esta_competicao=0;
-                    $competicao_jogada["divisao"] = "D3";
-                    $competicao_jogada["TipoLiga"] = "superior";
+                if (is_array($time["RESULTADOS"]) ){
+                    foreach ($time["RESULTADOS"] as $idresultado => $competicao_jogada){
+                        if ($debug == 1)
+                            echo "\n  ";
+                        $XP_esta_competicao=0;
+                        $competicao_jogada["divisao"] = "D3";
+                        $competicao_jogada["TipoLiga"] = "superior";
 
-                    if ($debug == 1)
-                        echo "\n RANK ". $competicao_jogada["rank"] ;
-                    if ($debug == 1)
-                        echo "\n divisao ". $competicao_jogada["divisao"] ;
+                        if ($debug == 1)
+                            echo "\n RANK ". $competicao_jogada["rank"] ;
+                        if ($debug == 1)
+                            echo "\n divisao ". $competicao_jogada["divisao"] ;
 
-                    if (!$this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"]][  $competicao_jogada["rank"] ])
-                        $XP_esta_competicao += $this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"]][ "consolacao" ];
-                    else
-                        $XP_esta_competicao += $this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"] ][ $competicao_jogada["rank"] ];
+                        if (!$this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"]][  $competicao_jogada["rank"] ])
+                            $XP_esta_competicao += $this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"]][ "consolacao" ];
+                        else
+                            $XP_esta_competicao += $this->Globais->XP_Por_Divisao_Resultados[$competicao_jogada["divisao"] ][ $competicao_jogada["rank"] ];
 
-                    if ($debug == 1)
-                        echo " \n XP_esta_competicao: " .$XP_esta_competicao;
+                        if ($debug == 1)
+                            echo " \n XP_esta_competicao: " .$XP_esta_competicao;
 
-                    $XP_esta_competicao_calculado = $XP_esta_competicao * $this->Globais->XP_Por_Divisao_TempoJogo[  $competicao_jogada["divisao"] ] * $this->Globais->XP_Peso_Liga[  $competicao_jogada["TipoLiga"]  ];
+                        $XP_esta_competicao_calculado = $XP_esta_competicao * $this->Globais->XP_Por_Divisao_TempoJogo[  $competicao_jogada["divisao"] ] * $this->Globais->XP_Peso_Liga[  $competicao_jogada["TipoLiga"]  ];
 
-                    $XP_competicao += $XP_esta_competicao_calculado;
-                    if ($debug == 1)
-                        echo "\n XP COMPETICAO $idresultado: ($XP_esta_competicao_calculado) " .$XP_esta_competicao."  * ".
-                            $this->Globais->XP_Por_Divisao_TempoJogo[  $competicao_jogada["divisao"] ]." * ".
-                            $this->Globais->XP_Peso_Liga[  $competicao_jogada["TipoLiga"]  ];
+                        $XP_competicao += $XP_esta_competicao_calculado;
+                        if ($debug == 1)
+                            echo "\n XP COMPETICAO $idresultado: ($XP_esta_competicao_calculado) " .$XP_esta_competicao."  * ".
+                                $this->Globais->XP_Por_Divisao_TempoJogo[  $competicao_jogada["divisao"] ]." * ".
+                                $this->Globais->XP_Peso_Liga[  $competicao_jogada["TipoLiga"]  ];
 
+                    }
                 }
+
             }
         }
 

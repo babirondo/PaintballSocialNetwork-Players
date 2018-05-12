@@ -104,7 +104,7 @@ class Teams{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -152,7 +152,7 @@ class Teams{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -161,7 +161,7 @@ class Teams{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -169,9 +169,9 @@ class Teams{
 
         if ( strlen(trim($jsonRAW["time"])) < 1 ){
             $data =  array(	"resultado" =>  "ERRO",
-                "erro" => "Time Invalido - ".var_export($jsonRAW, true) );
+                "erro" => "Time Invalido - ". ($jsonRAW["time"] ) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
