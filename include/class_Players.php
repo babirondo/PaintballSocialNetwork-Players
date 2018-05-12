@@ -17,7 +17,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -87,7 +87,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -169,10 +169,11 @@ class Players{
         if ($jsonRAW["procurando"]["Coach"]) $filtros[] = " procurando_coach ilike '%".$jsonRAW["procurando"]["Coach"]."%'";
 
 
-
+        //var_dump($args);
 
         $sql = "SELECT * FROM jogadores  ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
-        //if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
+        //echo $sql;exit;
+//        if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0  ){
@@ -247,7 +248,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -270,7 +271,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                     "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(501)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -279,7 +280,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                     "erro" => "JSON zuado -  ".$request->getParsedBody().var_export($jsonRAW, true) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(502)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
 
@@ -313,6 +314,8 @@ class Players{
                         treino_sexta = '".$jsonRAW["treino"]["Sexta"]."', 
                         treino_sabado = '".$jsonRAW["treino"]["Sabado"]."', 
                         treino_domingo = '".$jsonRAW["treino"]["Domingo"]."', 
+
+                        playsince = '".$jsonRAW["playsince"]."', 
 
                         procurando_doritos = '".$jsonRAW["procurando"]["Doritos"]."', 
                         procurando_doritoscorner = '".$jsonRAW["procurando"]["DoritosCorner"]."', 
@@ -356,7 +359,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -366,7 +369,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -442,7 +445,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -451,7 +454,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -463,7 +466,7 @@ class Players{
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "nao foi possivel criar o time" );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
 
@@ -513,7 +516,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -522,7 +525,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -531,7 +534,7 @@ class Players{
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "nao foi possivel criar o time" );
-            return $response->withStatus(500)
+            return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
 
