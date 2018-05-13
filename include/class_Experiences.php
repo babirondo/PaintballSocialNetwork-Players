@@ -98,12 +98,13 @@ class Experiences{
         }
 
         $sql = "INSERT INTO resultados (idexperience, idevento, rank, mainposicao )
-                VALUES($idexperience, $idevento, $rank, '$posicao')";
-        $this->con->executa($sql);
+                VALUES($idexperience, $idevento, $rank, '$posicao')
+                RETURNING id ";
+        $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){
+            return $this->con->dados["id"];
 
-            return true;
         }
         else {
             return false;

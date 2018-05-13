@@ -423,15 +423,15 @@ class Players{
                 }
                 else{
 
-                    $data =  array(	"resultado" =>  "ERRO",
-                        "erro" => "Nao foi possivel criar o time"  );
+                    $this->data =  array(	"resultado" =>  "ERRO",
+                        "erro" => $query_API["erro"]." Nao foi possivel criar o time"  );
 
                     return false;
                 }
             }
             else{
-                $data =  array(	"resultado" =>  "ERRO",
-                    "erro" => "Nao foi possivel criar o time"  );
+                $this->data =  array(	"resultado" =>  "ERRO",
+                    "erro" => $query_API["erro"]."API nao retornou como esperado"  );
 
                 return false;
             }
@@ -446,7 +446,7 @@ class Players{
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
-            return $response->withStatus(203)
+            return $response->withStatus(201)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -455,7 +455,7 @@ class Players{
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
 
-            return $response->withStatus(203)
+            return $response->withStatus(202)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
@@ -466,7 +466,7 @@ class Players{
         $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $jsonRAW['idjogadorlogado']);
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
-                "erro" => "nao foi possivel criar o time" );
+                "erro" => $this->data["erro"]." .. nao foi possivel criar o time" );
             return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
@@ -484,16 +484,18 @@ class Players{
 
         if ( $this->con->res == 1 ){
             $data["idexperience"] = $this->con->dados["id"];
+            $data["idtime"] = $idtime;
+            $data["resultado"] = "SUCESSO";
 
 
             if (is_array($jsonRAW["idevento"])){
                 foreach ($jsonRAW["idevento"] as $idRes => $event){
-                    $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                    $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
                 }
             }
 
 
-            $data =   array(	"resultado" =>  "SUCESSO" );
+          //  $data =   array(	"resultado" =>  "SUCESSO" );
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
         }
         else {

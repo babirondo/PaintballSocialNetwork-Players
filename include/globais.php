@@ -101,6 +101,7 @@ class Globais{
         $this->ProcurarTimes = $servidor."/PaintballSocialNetwork-Players/SearchTeams/"; // UNIT TEST
         $this->CriarMeuTimeSalvar = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/";// UNIT TEST
         $this->MeusTimesRemoto = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/MySquads/"; //UNIT TEST
+        $this->adicionar_time = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/"; //UNIT TEST
 
 
 
