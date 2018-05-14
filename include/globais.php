@@ -9,7 +9,7 @@ class Globais{
 
     function __construct( ){
 
-        if ( $_SERVER["CONTEXT_DOCUMENT_ROOT"] == "/var/www/html")
+        if ( $_SERVER["PATH"] == "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin")
             $this->banco = $this->env = "prod";
         else{
             $this->banco= "local";
