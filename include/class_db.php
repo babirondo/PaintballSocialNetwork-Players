@@ -32,6 +32,10 @@ class db
         $this->conectado = true;
         return true;
     }
+    function fechar()
+    {
+        $this->pdo = null;
+    }
     function executa($sql, $prepared=0, $l=__LINE__, $debug=null)
     {
         $this->dados = null;

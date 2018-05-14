@@ -21,13 +21,13 @@ class Score{
     }
 
 
-    function calculaskill($idjogador){
+    function calculaskill($idjogador, $dados_jogador){
 
         $debug = 0;
         $args["nao_calcula_skill"]=1;
         $args["idjogador"] = $idjogador;
 
-        $dados_jogador = $this->Players->getJogador($args ,$jsonRAW);
+      //  $dados_jogador = $this->Players->getJogador($args ,$jsonRAW);
 
         $dados_jogador["JOGADORES"][$idjogador]["playsince"] = 2009;
         //var_dump($dados_jogador ); exit;

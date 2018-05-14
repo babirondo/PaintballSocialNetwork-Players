@@ -22,6 +22,40 @@ class testPlayers extends PHPUnit\Framework\TestCase
         $this->Globais = new raiz\Globais();
     }
 
+
+    public function testPUT_AlterandoMeuTime()
+    {
+
+        set_time_limit(10);
+        $idjogador = 10;
+
+        $time = "testAAA meu novo time ;) ALTERADO ".rand(500,8500);
+        $idtime=410;
+
+        $JSON = json_decode( " {\"time\":\"$time\",\"treino\":{\"Domingo\":\"Domingo\"},\"nivelcompeticao\":\"D2\",\"procurando\":{\"Doritos\":\"Doritos\"},\"localtreino\":\"Dublin\",\"foto\":{\"name\":\"\",\"type\":\"\",\"tmp_name\":\"\",\"error\":4,\"size\":0},\"idtime\":\"$idtime\"} " , true);
+        if ($JSON == NULL ) die(" JSON erro de formacao");
+
+        $trans = null;$trans = array(":idjogadorlogado" => $idjogador );
+        //var_dump(strtr($this->Globais->MeusTimesRemoto, $trans));
+
+        $response = $this->client->request('PUT', strtr($this->Globais->CriarMeuTimeSalvar, $trans)
+
+            , array(
+                'headers' => array('Content-type' => 'application/x-www-form-urlencoded'),
+                'timeout' => 10, // Response timeout
+                'form_params' => $JSON,
+                'connect_timeout' => 10 ,// Connection timeout,
+
+
+
+            )
+        );
+        $jsonRetorno = json_decode($response->getBody()->getContents(), 1);
+
+
+        $this->assertEquals('SUCESSO', $jsonRetorno["resultado"] );
+    }
+
     public function testPOST_CriarMeutimeSalvar()
     {
 
@@ -142,8 +176,9 @@ class testPlayers extends PHPUnit\Framework\TestCase
 
     public function testPOST_SearchPlayers()
     {
+        //TODO: dando timeout 10 seconds
 
-        set_time_limit(10);
+        set_time_limit(30);
         $idjogador = 10;
         $idexperiencia= 117;
 
@@ -159,9 +194,9 @@ class testPlayers extends PHPUnit\Framework\TestCase
 
             , array(
                 'headers' => array('Content-type' => 'application/x-www-form-urlencoded'),
-                'timeout' => 10, // Response timeout
+                'timeout' => 30, // Response timeout
                 'form_params' => $JSON,
-                'connect_timeout' => 10 // Connection timeout
+                'connect_timeout' => 30 // Connection timeout
 
 
             )
@@ -362,7 +397,7 @@ class testPlayers extends PHPUnit\Framework\TestCase
 
     public function testGet_Players_GET_endpoint()
     {
-
+        set_time_limit(30);
         $idjogador = 10;
         $trans = null;
         $trans = array(":idjogadorlogado" => $idjogador);

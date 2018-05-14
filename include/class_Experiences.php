@@ -61,7 +61,7 @@ class Experiences{
         if (!$idexperience){
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => "Experience don't registered" );
-            return $response->withStatus(500)
+            return $response->withStatus(203)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
 

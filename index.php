@@ -15,6 +15,17 @@ $container['renderer'] = new PhpRenderer("./templates");
 
 
 
+
+$app->delete('/Players/{idusuario:[0-9]+}/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+    $retorno = $cPlayer->deleteJogador($request, $response, $args ,  $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
+
 $app->get('/healthcheck/', function ($request, $response, $args)  use ($app )   {
     require_once("healthcheck/healthcheck.php");
 

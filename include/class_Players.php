@@ -23,11 +23,13 @@ class Players{
         }
 
 
+
         $sql = "SELECT jt.id_time
                 FROM jogador_times  jt
                     
-                WHERE jt.id_time     IN (  ".$jsonRAW['idtime']." )    ";
-//echo $sql;
+                WHERE jt.id_time  IN (  ". implode(",",$jsonRAW['idtimes'] ) .")
+                group by jt.id_time";
+
         $this->con->executa($sql);
 
         if ( $this->con->nrw > 0 ){
@@ -35,12 +37,19 @@ class Players{
 
             $data =   array(	"resultado" =>  "SUCESSO" );
 
+            $jsonRAW_novo = $jsonRAW;
+            unset($jsonRAW_novo["idtimes"]);
+
             while ($this->con->navega(0)){
                 $contador++;
 
+                $jsonRAW_novo["idtime"] = $this->con->dados["id_time"];
 
+                $this->conAuxiliar = new db();
+                $this->conAuxiliar->conecta();
 
-                $data["TIMES"][$this->con->dados["id_time"]] = $this->getJogador(null,$jsonRAW);
+                $data["TIMES"][$this->con->dados["id_time"]] = $this->getJogador(null,$jsonRAW_novo, $this->conAuxiliar);
+                $this->conAuxiliar->fechar();
                 /*
                 $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["nome"] = $this->con->dados["nome"];
                 $data["TIMES"][$this->con->dados["id_time"]]["JOGADORES"][ $this->con->dados["id_jogador"] ]["idade"] = $this->con->dados["idade"];
@@ -136,16 +145,17 @@ class Players{
     }
 
 
-    function getJogador(  $args , $jsonRAW){
+    function getJogador(  $args , $jsonRAW, $conexaoBanco = null){
 
-
+        if (!$conexaoBanco) $conexaoBanco = $this->con;
 
         //if ($jsonRAW["idtimes"]) $filtros[] = " id IN (".$jsonRAW["idtimes"].")";
         if ($args["idusuario"]) $filtros[] = " id_jogador = '".$args["idusuario"]."'";
         if ($args["idjogador"]) $filtros[] = " id_jogador = '".$args["idjogador"]."'";
         if ($jsonRAW["nome"]) $filtros[] = " nome ilike '%".$jsonRAW["nome"]."%'";
         if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
-        if ($jsonRAW["idtime"]) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (".$jsonRAW["idtime"].") )";
+        if (is_array($jsonRAW["idtimes"])) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (".implode(",",$jsonRAW["idtimes"]).") )";
+        if ( ($jsonRAW["idtime"])) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (". ( $jsonRAW["idtime"]).") )";
         if ($jsonRAW["localtreino"]) $filtros[] = " cidade ilike '%".$jsonRAW["localtreino"]."%'";
         if ($jsonRAW["nivelcompeticao"]) $filtros[] = " nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
 
@@ -168,67 +178,71 @@ class Players{
         //var_dump($args);
 
         $sql = "SELECT * FROM jogadores  ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
-        //echo $sql;exit;
-//        if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
-        $this->con->executa($sql);
 
-        if ( $this->con->nrw > 0  ){
+//        if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
+        $conexaoBanco->executa($sql);
+
+        if ( $conexaoBanco->nrw > 0  ){
 
             if ($args["nao_calcula_skill"] == null ) {
                 require_once("include/class_Score.php");
                 $this->Score = new Score();
             }
-            while ($this->con->navega(0)) {
+            while ($conexaoBanco->navega(0)) {
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["nome"] = $conexaoBanco->dados["nome"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["idade"] = $conexaoBanco->dados["idade"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["cidade"] = $conexaoBanco->dados["cidade"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["playsince"] = $conexaoBanco->dados["playsince"];
+            //    $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["foto"] = $conexaoBanco->dados["foto"];
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snake"] = $conexaoBanco->dados["snake"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snakecorner"] = $conexaoBanco->dados["snakecorner"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["backcenter"] = $conexaoBanco->dados["backcenter"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["coach"] = $conexaoBanco->dados["coach"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["doritos"] = $conexaoBanco->dados["doritos"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["doritoscorner"] = $conexaoBanco->dados["doritoscorner"];
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["nivelcompeticao"] = $conexaoBanco->dados["nivelcompeticao"];
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["Snake"] = trim($conexaoBanco->dados["procurando_snake"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["SnakeCorner"] = trim($conexaoBanco->dados["procurando_snakecorner"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["BackCenter"] = trim($conexaoBanco->dados["procurando_backcenter"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["Doritos"] = trim($conexaoBanco->dados["procurando_doritos"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["DoritosCorner"] = trim($conexaoBanco->dados["procurando_doritoscorner"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando"]["Coach"] = trim($conexaoBanco->dados["procurando_coach"]);
+
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Segunda"] = trim($conexaoBanco->dados["treino_segunda"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Terca"] = trim($conexaoBanco->dados["treino_terca"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Quarta"] = trim($conexaoBanco->dados["treino_quarta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Quinta"] = trim($conexaoBanco->dados["treino_quinta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Sexta"] = trim($conexaoBanco->dados["treino_sexta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Sabado"] = trim($conexaoBanco->dados["treino_sabado"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino"]["Domingo"] = trim($conexaoBanco->dados["treino_domingo"]);
+
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_Snake"] = trim($conexaoBanco->dados["procurando_snake"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_SnakeCorner"] = trim($conexaoBanco->dados["procurando_snakecorner"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_BackCenter"] = trim($conexaoBanco->dados["procurando_backcenter"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_Doritos"] = trim($conexaoBanco->dados["procurando_doritos"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_DoritosCorner"] = trim($conexaoBanco->dados["procurando_doritoscorner"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["procurando_Coach"] = trim($conexaoBanco->dados["procurando_coach"]);
+
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Segunda"] = trim($conexaoBanco->dados["treino_segunda"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Terca"] = trim($conexaoBanco->dados["treino_terca"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Quarta"] = trim($conexaoBanco->dados["treino_quarta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Quinta"] = trim($conexaoBanco->dados["treino_quinta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Sexta"] = trim($conexaoBanco->dados["treino_sexta"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Sabado"] = trim($conexaoBanco->dados["treino_sabado"]);
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["treino_Domingo"] = trim($conexaoBanco->dados["treino_domingo"]);
+
+                //tem que ser o ultimo
                 if ($args["nao_calcula_skill"] == null ){
-                    $data["JOGADORES"][$this->con->dados["id_jogador"]]["skill"] = $this->Score->calculaskill($this->con->dados["id_jogador"]);
+                      $skill = $this->Score->calculaskill($conexaoBanco->dados["id_jogador"],$data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]);
+                      $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["skill"] = $skill;
                 }
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["nome"] = $this->con->dados["nome"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["idade"] = $this->con->dados["idade"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["cidade"] = $this->con->dados["cidade"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["playsince"] = $this->con->dados["playsince"];
-            //    $data["JOGADORES"][$this->con->dados["id_jogador"]]["foto"] = $this->con->dados["foto"];
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["snake"] = $this->con->dados["snake"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["snakecorner"] = $this->con->dados["snakecorner"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["backcenter"] = $this->con->dados["backcenter"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["coach"] = $this->con->dados["coach"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["doritos"] = $this->con->dados["doritos"];
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["doritoscorner"] = $this->con->dados["doritoscorner"];
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["nivelcompeticao"] = $this->con->dados["nivelcompeticao"];
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["Snake"] = trim($this->con->dados["procurando_snake"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["SnakeCorner"] = trim($this->con->dados["procurando_snakecorner"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["BackCenter"] = trim($this->con->dados["procurando_backcenter"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["Doritos"] = trim($this->con->dados["procurando_doritos"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["DoritosCorner"] = trim($this->con->dados["procurando_doritoscorner"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando"]["Coach"] = trim($this->con->dados["procurando_coach"]);
-
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Segunda"] = trim($this->con->dados["treino_segunda"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Terca"] = trim($this->con->dados["treino_terca"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Quarta"] = trim($this->con->dados["treino_quarta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Quinta"] = trim($this->con->dados["treino_quinta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Sexta"] = trim($this->con->dados["treino_sexta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Sabado"] = trim($this->con->dados["treino_sabado"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino"]["Domingo"] = trim($this->con->dados["treino_domingo"]);
-
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_Snake"] = trim($this->con->dados["procurando_snake"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_SnakeCorner"] = trim($this->con->dados["procurando_snakecorner"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_BackCenter"] = trim($this->con->dados["procurando_backcenter"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_Doritos"] = trim($this->con->dados["procurando_doritos"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_DoritosCorner"] = trim($this->con->dados["procurando_doritoscorner"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["procurando_Coach"] = trim($this->con->dados["procurando_coach"]);
-
-
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Segunda"] = trim($this->con->dados["treino_segunda"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Terca"] = trim($this->con->dados["treino_terca"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Quarta"] = trim($this->con->dados["treino_quarta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Quinta"] = trim($this->con->dados["treino_quinta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Sexta"] = trim($this->con->dados["treino_sexta"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Sabado"] = trim($this->con->dados["treino_sabado"]);
-                $data["JOGADORES"][$this->con->dados["id_jogador"]]["treino_Domingo"] = trim($this->con->dados["treino_domingo"]);
 
             }
             return $data;
@@ -490,7 +504,9 @@ class Players{
 
             if (is_array($jsonRAW["idevento"])){
                 foreach ($jsonRAW["idevento"] as $idRes => $event){
-                    $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                    if ($idRes > 0 ){
+                        $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                    }
                 }
             }
 
@@ -579,4 +595,46 @@ class Players{
                 ->withJson($data);
         }
     }
+
+
+    function deleteJogador(  $request, $response, $args,   $jsonRAW){
+
+        if (!$this->con->conectado){
+            $data =   array(	"resultado" =>  "ERRO",
+                "erro" => "nao conectado - ".$this->con->erro );
+            return $response->withStatus(201)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+        IF (!is_array ($jsonRAW)  ) {
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "JSON zuado - ".var_export($jsonRAW, true) );
+
+            return $response->withStatus(202)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+        $sql = "DELETE FROM jogadores WHERE  id_jogador = '".$args['idusuario']."'";
+        //echo $sql;
+        $this->con->executa($sql, 1);
+
+        if ( $this->con->res == 1 ){
+            $data["resultado"] = "SUCESSO";
+
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+        }
+        else {
+            // nao encontrado
+            $data =    array(	"resultado" =>  "ERRO",
+                "erro" => "Nao foi possivel deletar o jogador  - $mensagem_retorno");
+
+            return $response->withStatus(200)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
+    }
+
 }
