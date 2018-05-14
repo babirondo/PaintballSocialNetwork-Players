@@ -9,7 +9,7 @@ class Globais{
 
     function __construct( ){
 
-        if ( $_SERVER["PATH"] == "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin")
+        if ( $_SERVER["HTTP_HOST"] == "pb.mundivox.rio" || $_SERVER["HOSTNAME"] == "pb.mundivox.rio" )
             $this->banco = $this->env = "prod";
         else{
             $this->banco= "local";
