@@ -240,7 +240,7 @@ class Players{
 
                 //tem que ser o ultimo
                 if ($args["nao_calcula_skill"] == null ){
-                      $skill = $this->Score->calculaskill($conexaoBanco->dados["id_jogador"],$data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]);
+                    //  $skill = $this->Score->calculaskill($conexaoBanco->dados["id_jogador"],$data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]);
                       $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["skill"] = $skill;
                 }
 
