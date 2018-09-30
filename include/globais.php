@@ -9,25 +9,11 @@ class Globais{
 
     function __construct( ){
 
-        if ( $_SERVER["HTTP_HOST"] == "pb.mundivox.rio" || $_SERVER["HOSTNAME"] == "pb.mundivox.rio" )
-            $this->banco = $this->env = "prod";
-        else{
-            $this->banco= "local";
-            $this->env = "local";
-        }
-        switch($this->env){
 
-            case("local");
-                $servidor= "http://localhost:81";
-                $this->verbose=1;
-                break;
+        $this->banco = $this->env = "prod";
 
-            case("prod");
-                $servidor= "http://pb.mundivox.rio";
-                $this->verbose=1;
-                break;
-
-        }
+        $servidor= "http://52.211.159.235";
+        $this->verbose=1;
         switch($this->banco){
 
             case("local");
@@ -38,9 +24,9 @@ class Globais{
                 break;
 
             case("prod");
-                $this->localhost = "pb.mundivox.rio";
-                $this->username = "pb";
-                $this->password = "Rodr1gues";
+                $this->localhost = "localhost";
+                $this->username = "postgres";
+                $this->password = "bruno";
                 $this->db ="usuarios";
                 break;
 
