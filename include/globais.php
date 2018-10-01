@@ -12,7 +12,11 @@ class Globais{
 
         $this->banco = $this->env = "prod";
 
-        $servidor= "http://52.211.159.235";
+        $servidor["UI"] = $servidor["frontend"] = "http://34.247.245.249";
+        $servidor["autenticacao"] = "http://34.242.188.167";
+        $servidor["players"] = "http://54.171.155.88";
+        $servidor["campeonato"] = "http://34.242.140.31";
+
         $this->verbose=1;
         switch($this->banco){
 
@@ -74,24 +78,20 @@ class Globais{
 
 
         //ROTAS
-        $this->healthcheck = $servidor."/PaintballSocialNetwork-Players/healthcheck/"; //UNIT TEST
+        $this->healthcheck = $servidor["players"]."/PaintballSocialNetwork-Players/healthcheck/"; //UNIT TEST
 
-        $this->Players_UPDATE_endpoint = $servidor."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
-        $this->Players_GET_endpoint = $servidor."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
-        $this->Players_ADD_TEAM_endpoint = $servidor."/PaintballSocialNetwork-Players/Players/Experiences/"; //UNIT TEST
-        $this->listar_times_de_um_jogador = $servidor."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences"; //UNIT TEST
-        $this->delete_experiencia = $servidor."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences/:idexperiencia";//UNIT TEST
-        $this->editar_experiencia = $servidor."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences/:idexperiencia/";//UNIT TEST
-        $this->ProcurarJogadores = $servidor."/PaintballSocialNetwork-Players/SearchPlayers/"; //UNIT TEST
-        $this->jogadores_por_times = $servidor."/PaintballSocialNetwork-Players/Teams/Players/";  // UNIT TEST
-        $this->ProcurarTimes = $servidor."/PaintballSocialNetwork-Players/SearchTeams/"; // UNIT TEST
-        $this->CriarMeuTimeSalvar = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/";// UNIT TEST
-        $this->MeusTimesRemoto = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/MySquads/"; //UNIT TEST
-        $this->adicionar_time = $servidor."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/"; //UNIT TEST
-
-
-
-
+        $this->Players_UPDATE_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
+        $this->Players_GET_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
+        $this->Players_ADD_TEAM_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/Experiences/"; //UNIT TEST
+        $this->listar_times_de_um_jogador = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences"; //UNIT TEST
+        $this->delete_experiencia = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences/:idexperiencia";//UNIT TEST
+        $this->editar_experiencia = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences/:idexperiencia/";//UNIT TEST
+        $this->ProcurarJogadores = $servidor["players"]."/PaintballSocialNetwork-Players/SearchPlayers/"; //UNIT TEST
+        $this->jogadores_por_times = $servidor["players"]."/PaintballSocialNetwork-Players/Teams/Players/";  // UNIT TEST
+        $this->ProcurarTimes = $servidor["players"]."/PaintballSocialNetwork-Players/SearchTeams/"; // UNIT TEST
+        $this->CriarMeuTimeSalvar = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/";// UNIT TEST
+        $this->MeusTimesRemoto = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/MySquads/"; //UNIT TEST
+        $this->adicionar_time = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/"; //UNIT TEST
 
     }
 

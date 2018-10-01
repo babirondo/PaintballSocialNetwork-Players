@@ -1,4 +1,6 @@
 vendor/
+/vendor/
+/vendor/*
 /.idea/*
 .idea/*
 .idea/
@@ -6,4 +8,3 @@ vendor/
 /.idea/
 /.idea
 /.idea/*
-
