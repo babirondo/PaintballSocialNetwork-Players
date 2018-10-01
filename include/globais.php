@@ -20,18 +20,11 @@ class Globais{
         $this->verbose=1;
         switch($this->banco){
 
-            case("local");
-                $this->localhost = "localhost";
-                $this->username = "postgres";
-                $this->password = "bruno";
-                $this->db ="usuarios_local";
-                break;
-
             case("prod");
                 $this->localhost = "localhost";
                 $this->username = "postgres";
                 $this->password = "bruno";
-                $this->db ="usuarios";
+                $this->db ="jogadores";
                 break;
 
         }
