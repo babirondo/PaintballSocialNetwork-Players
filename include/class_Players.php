@@ -455,7 +455,7 @@ class Players{
 
     }
 
-    function Criar_Jogador(){
+    function Criar_Jogador($request, $response, $args,   $jsonRAW){
       if (!$this->con->conectado){
           $data =   array(	"resultado" =>  "ERRO",
                   "erro" => "nao conectado - ".$this->con->erro );
