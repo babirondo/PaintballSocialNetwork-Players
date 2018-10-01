@@ -26,7 +26,7 @@ class Players{
 
         $sql = "SELECT jt.id_time
                 FROM jogador_times  jt
-                    
+
                 WHERE jt.id_time  IN (  ". implode(",",$jsonRAW['idtimes'] ) .")
                 group by jt.id_time";
 
@@ -102,12 +102,12 @@ class Players{
         }
 
 
-        $sql = "SELECT j.*, jt.*, 
+        $sql = "SELECT j.*, jt.*,
                         to_char(  jt.inicio, 'mm/yyyy') inicio_formatado, to_char(  jt.fim, 'mm/yyyy') fim_formatado,
                         to_char(  jt.inicio, 'dd/mm/yyyy') inicio_ddmmyyyy, to_char(  jt.fim, 'dd/mm/yyyy') fim_ddmmyyyy
-                FROM jogador_times jt  
+                FROM jogador_times jt
                   INNER JOIN jogadores j ON (j.id_jogador = jt.id_jogador)
-                WHERE jt.id_jogador = '".$args['idusuario']."' 
+                WHERE jt.id_jogador = '".$args['idusuario']."'
                 ORDER BY jt.fim  DESC  ";
         $this->con->executa($sql);
 
@@ -304,37 +304,37 @@ class Players{
 
         //INICIO DA ROTINA DE ALTERACAO DE USUARIO
         $sql = "UPDATE jogadores SET
-                      nome = '".$jsonRAW["nome"]."',         
-                        idade = '".$jsonRAW["idade"]."', 
-                        cidade = '".$jsonRAW["cidade"]."', 
-                        snake = '".$jsonRAW["Snake"]."', 
-                        snakecorner = '".$jsonRAW["SnakeCorner"]."', 
-                        $sql_complemento 
-                        backcenter = '".$jsonRAW["BackCenter"]."', 
-                        doritos = '".$jsonRAW["Doritos"]."', 
-                        coach = '".$jsonRAW["Coach"]."', 
+                      nome = '".$jsonRAW["nome"]."',
+                        idade = '".$jsonRAW["idade"]."',
+                        cidade = '".$jsonRAW["cidade"]."',
+                        snake = '".$jsonRAW["Snake"]."',
+                        snakecorner = '".$jsonRAW["SnakeCorner"]."',
+                        $sql_complemento
+                        backcenter = '".$jsonRAW["BackCenter"]."',
+                        doritos = '".$jsonRAW["Doritos"]."',
+                        coach = '".$jsonRAW["Coach"]."',
                         doritoscorner = '".$jsonRAW["DoritosCorner"]."',
 
                         nivelcompeticao = '".$jsonRAW["nivelcompeticao"]."',
-                         
-                        treino_segunda = '".$jsonRAW["treino"]["Segunda"]."', 
-                        treino_terca = '".$jsonRAW["treino"]["Terca"]."', 
-                        treino_quarta = '".$jsonRAW["treino"]["Quarta"]."', 
-                        treino_quinta = '".$jsonRAW["treino"]["Quinta"]."', 
-                        treino_sexta = '".$jsonRAW["treino"]["Sexta"]."', 
-                        treino_sabado = '".$jsonRAW["treino"]["Sabado"]."', 
-                        treino_domingo = '".$jsonRAW["treino"]["Domingo"]."', 
 
-                        playsince = '".$jsonRAW["playsince"]."', 
+                        treino_segunda = '".$jsonRAW["treino"]["Segunda"]."',
+                        treino_terca = '".$jsonRAW["treino"]["Terca"]."',
+                        treino_quarta = '".$jsonRAW["treino"]["Quarta"]."',
+                        treino_quinta = '".$jsonRAW["treino"]["Quinta"]."',
+                        treino_sexta = '".$jsonRAW["treino"]["Sexta"]."',
+                        treino_sabado = '".$jsonRAW["treino"]["Sabado"]."',
+                        treino_domingo = '".$jsonRAW["treino"]["Domingo"]."',
 
-                        procurando_doritos = '".$jsonRAW["procurando"]["Doritos"]."', 
-                        procurando_doritoscorner = '".$jsonRAW["procurando"]["DoritosCorner"]."', 
-                        procurando_backcenter = '".$jsonRAW["procurando"]["BackCenter"]."', 
-                        procurando_snakecorner  = '".$jsonRAW["procurando"]["SnakeCorner"]."', 
-                        procurando_snake = '".$jsonRAW["procurando"]["Snake"]."', 
-                        procurando_coach = '".$jsonRAW["procurando"]["Coach"]."' 
-                        
-                      
+                        playsince = '".$jsonRAW["playsince"]."',
+
+                        procurando_doritos = '".$jsonRAW["procurando"]["Doritos"]."',
+                        procurando_doritoscorner = '".$jsonRAW["procurando"]["DoritosCorner"]."',
+                        procurando_backcenter = '".$jsonRAW["procurando"]["BackCenter"]."',
+                        procurando_snakecorner  = '".$jsonRAW["procurando"]["SnakeCorner"]."',
+                        procurando_snake = '".$jsonRAW["procurando"]["Snake"]."',
+                        procurando_coach = '".$jsonRAW["procurando"]["Coach"]."'
+
+
                 WHERE  id_jogador = '".$args['idusuario']."'  ";
         //echo "<PRE>$sql</PRE>";
         $this->con->executa($sql);
@@ -455,6 +455,55 @@ class Players{
 
     }
 
+    function Criar_Jogador(){
+      if (!$this->con->conectado){
+          $data =   array(	"resultado" =>  "ERRO",
+                  "erro" => "nao conectado - ".$this->con->erro );
+          return $response->withStatus(501)
+              ->withHeader('Content-type', 'application/json;charset=utf-8')
+              ->withJson($data);
+      }
+
+      IF (!is_array ($jsonRAW)  ) {
+          $data =  array(	"resultado" =>  "ERRO",
+                  "erro" => "JSON zuado -  ".$request->getParsedBody().var_export($jsonRAW, true) );
+
+          return $response->withStatus(502)
+              ->withHeader('Content-type', 'application/json;charset=utf-8')
+              ->withJson($data);
+
+
+      }
+
+
+
+      $sql = "INSERT INTO jogadores (nome )
+          VALUES('".$jsonRAW['nome']."')
+          RETURNING id_jogador";
+      $this->con->executa($sql, 1);
+
+      if ( $this->con->res == 1 ){
+          $idjogador = $this->con->dados["id_jogador"];
+
+          $data =   array(	"resultado" =>  "SUCESSO" ,
+                              "debug" =>  $sql,
+                            "id_jogador" => $idjogador );
+          return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
+      }
+      else {
+
+          // nao encontrado
+          $data =    array(	"resultado" =>  "ERRO",
+                            "erro" => "Nao foi possivel alterar os dados");
+
+          return $response->withStatus(200)
+              ->withHeader('Content-type', 'application/json;charset=utf-8')
+              ->withJson($data);
+
+      }
+
+    }
+
     function Adicionar_time_ao_jogador(  $request, $response, $args,   $jsonRAW){
 
         if (!$this->con->conectado){
@@ -560,10 +609,10 @@ class Players{
         $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":" null ");
         $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
 
-        $sql = "UPDATE jogador_times SET  
+        $sql = "UPDATE jogador_times SET
                      id_time = $idtime,
-                     inicio = $inicio, 
-                     fim = ".$fim.", 
+                     inicio = $inicio,
+                     fim = ".$fim.",
                      resultados = '".$jsonRAW["resultados"]."'
                  WHERE id = '".$args["idexperience"]."'";
         $this->con->executa($sql);

@@ -35,7 +35,15 @@ $app->get('/healthcheck/', function ($request, $response, $args)  use ($app )   
     return $retorno;
 }  );
 
+$app->post('/Players/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
 
+    $cPlayer = new Players();
+    $retorno = $cPlayer->Criar_Jogador($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
 $app->put('/Players/{idusuario}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
 
@@ -188,4 +196,3 @@ $app->post('/SearchTeams/', function ($request, $response, $args)  use ($app )  
 
 
 $app->run();
-
