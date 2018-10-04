@@ -12,10 +12,11 @@ class Globais{
 
         $this->banco = $this->env = "prod";
 
-        $servidor["UI"] = $servidor["frontend"] = "http://34.247.245.249";
-        $servidor["autenticacao"] = "http://34.242.188.167";
-        $servidor["players"] = "http://54.171.155.88";
-        $servidor["campeonato"] = "http://34.242.140.31";
+        $servidor["UI"] = $servidor["frontend"] = "http://52.50.253.182";
+        $servidor["autenticacao"] = "http://34.251.246.231";
+        $servidor["campeonato"] = "http://34.245.173.246";
+        $servidor["players"] = "http://34.245.105.70";
+
 
         $this->verbose=1;
         switch($this->banco){
