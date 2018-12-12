@@ -8,3 +8,4 @@ vendor/
 /.idea/
 /.idea
 /.idea/*
+composer.lock

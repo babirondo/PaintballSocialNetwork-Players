@@ -8,23 +8,23 @@ class Globais{
     public $banco;
 
     function __construct( ){
+        $this->banco = $this->env = "local";
 
+        $servidor["UI"] = $servidor["frontend"] = "http://192.168.0.150:81";
+        $servidor["autenticacao"] = "http://192.168.0.150:82";
+        $servidor["players"] = "http://192.168.0.150:83";
+        $servidor["campeonato"] = "http://192.168.0.150:81";
 
-        $this->banco = $this->env = "prod";
-
-        $servidor["UI"] = $servidor["frontend"] = "http://52.50.253.182";
-        $servidor["autenticacao"] = "http://34.251.246.231";
-        $servidor["campeonato"] = "http://34.245.173.246";
-        $servidor["players"] = "http://34.245.105.70";
-
+        $servidor["bancodados_campeonato"] = "192.168.0.150";
+        $servidor["bancodados_players"] = "192.168.0.150";
 
         $this->verbose=1;
         switch($this->banco){
 
-            case("prod");
-                $this->localhost = "localhost";
+            case("local");
+                $this->localhost = $servidor["bancodados_players"];
                 $this->username = "postgres";
-                $this->password = "bruno";
+                $this->password = "postgres";
                 $this->db ="jogadores";
                 break;
 
