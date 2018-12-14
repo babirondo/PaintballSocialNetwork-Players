@@ -1,14 +1,9 @@
 <?php
 namespace raiz;
-set_time_limit( 2 );
 
 class Score{
     function __construct( ){
-        /*
-        require_once("include/class_db.php");
-        $this->con = new db();
-        $this->con->conecta();
-        */
+        require_once("vendor/autoload.php");
 
         require_once("include/class_Players.php");
         $this->Players = new Players();
@@ -16,8 +11,7 @@ class Score{
         require_once("include/globais.php");
         $this->Globais = new Globais();
 
-        require_once("include/class_api.php");
-        $this->API = new class_API();
+        $this->API = new \babirondo\REST\RESTCall();
     }
 
 

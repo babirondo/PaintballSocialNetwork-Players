@@ -1,11 +1,20 @@
 <?php
 namespace raiz;
-set_time_limit( 2 );
+
 class Players{
     function __construct( ){
-        require_once("include/class_db.php");
-        $this->con = new db();
-        $this->con->conecta();
+      require_once 'vendor/autoload.php'; // Autoload files using Composer autoload
+
+      require_once("include/globais.php");
+      $this->Globais = new Globais();
+
+      $this->con = new \babirondo\classbd\db();
+      $this->con->conecta( $this->Globais->banco ,
+                            $this->Globais->localhost,
+                            $this->Globais->db,
+                            $this->Globais->username,
+                            $this->Globais->password,
+                            $this->Globais->port);
 
         require_once("include/class_Experiences.php");
         $this->Experience = new Experiences();
@@ -45,8 +54,17 @@ class Players{
 
                 $jsonRAW_novo["idtime"] = $this->con->dados["id_time"];
 
-                $this->conAuxiliar = new db();
-                $this->conAuxiliar->conecta();
+
+     
+
+
+                $this->conAuxiliar = new \babirondo\classbd\db();
+                $this->conAuxiliar->conecta($this->Globais->banco ,
+                                      $this->Globais->localhost,
+                                      $this->Globais->db,
+                                      $this->Globais->username,
+                                      $this->Globais->password,
+                                      $this->Globais->port);
 
                 $data["TIMES"][$this->con->dados["id_time"]] = $this->getJogador(null,$jsonRAW_novo, $this->conAuxiliar);
                 $this->conAuxiliar->fechar();

@@ -22,11 +22,12 @@ class Globais{
         switch($this->banco){
 
             case("local");
+                $this->banco = "Postgres";
                 $this->localhost = $servidor["bancodados_players"];
                 $this->username = "postgres";
                 $this->password = "postgres";
                 $this->db ="jogadores";
-                break;
+            break;
 
         }
 

@@ -3,9 +3,16 @@ namespace raiz;
 set_time_limit( 2 );
 class Experiences{
     function __construct( ){
-        require_once("include/class_db.php");
-        $this->con = new db();
-        $this->con->conecta();
+      require_once("include/globais.php");
+      $this->Globais = new Globais();
+
+      $this->con = new \babirondo\classbd\db();
+      $this->con->conecta( $this->Globais->banco ,
+                            $this->Globais->localhost,
+                            $this->Globais->db,
+                            $this->Globais->username,
+                            $this->Globais->password,
+                            $this->Globais->port);
     }
 
     function formataPosicao($posicao)
@@ -26,9 +33,8 @@ class Experiences{
 
         if ( $idevento ) $filtros[] = " idexperience = '$idevento'";
 
-        $sql = "SELECT r.*  
+        $sql = "SELECT r.*
                 FROM resultados r
-                  
                 ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ."
                  ORDER BY r.rank";
         $this->con->executa($sql);

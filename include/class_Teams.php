@@ -3,9 +3,18 @@ namespace raiz;
 
 class Teams{
     function __construct( ){
-        require("include/class_db.php");
-        $this->con = new db();
-        $this->con->conecta();
+      require_once 'vendor/autoload.php'; // Autoload files using Composer autoload
+
+      require_once("include/globais.php");
+      $this->Globais = new Globais();
+
+      $this->con = new \babirondo\classbd\db();
+      $this->con->conecta( $this->Globais->banco ,
+                            $this->Globais->localhost,
+                            $this->Globais->db,
+                            $this->Globais->username,
+                            $this->Globais->password,
+                            $this->Globais->port);
     }
 
 
@@ -184,21 +193,21 @@ class Teams{
         else
             $sql_complemento = " null ";
 
-        $sql = "INSERT INTO times (time , idowner, localtreino, 
-                                    nivelcompeticao, treino_segunda, treino_terca, 
+        $sql = "INSERT INTO times (time , idowner, localtreino,
+                                    nivelcompeticao, treino_segunda, treino_terca,
                                     treino_quarta, treino_quinta, treino_sexta,
-                                    treino_sabado, treino_domingo, procurando_snake, 
+                                    treino_sabado, treino_domingo, procurando_snake,
                                     procurando_snakecorner, procurando_backcenter, procurando_doritoscorner,
-                                    procurando_doritos , procurando_coach   , logotime                           
+                                    procurando_doritos , procurando_coach   , logotime
                                     )
-                VALUES( 
+                VALUES(
                                 '".$jsonRAW["time"]."', ".(($args["idusuario"])?$args["idusuario"]:"null").",'".$jsonRAW["localtreino"]."',
                                 '".$jsonRAW["nivelcompeticao"]."',".(($jsonRAW["treino"]["Segunda"])? "'".$jsonRAW["treino"]["Segunda"]."'" :"null").",".(($jsonRAW["treino"]["Terca"])? "'".$jsonRAW["treino"]["Terca"] ."'":"null").",
                                 ".(($jsonRAW["treino"]["Quarta"])? "'".$jsonRAW["treino"]["Quarta"]."'" :"null").",".(($jsonRAW["treino"]["Quinta"])? "'".$jsonRAW["treino"]["Quinta"]."'" :"null").",".(($jsonRAW["treino"]["Sexta"])? "'".$jsonRAW["treino"]["Sexta"]."'" :"null").",
                                 ".(($jsonRAW["treino"]["Sabado"])? "'".$jsonRAW["treino"]["Sabado"]."'" :"null").",".(($jsonRAW["treino"]["Domingo"])? "'".$jsonRAW["treino"]["Domingo"]."'" :"null").",".(($jsonRAW["procurando"]["Snake"])? "'".$jsonRAW["procurando"]["Snake"]."'" :"null").",
                                 ".(($jsonRAW["procurando"]["SnakeCorner"])? "'".$jsonRAW["procurando"]["SnakeCorner"]."'" :"null").",".(($jsonRAW["procurando"]["BackCenter"])? "'".$jsonRAW["procurando"]["BackCenter"]."'" :"null").",".(($jsonRAW["procurando"]["DoritosCorner"])? "'".$jsonRAW["procurando"]["DoritosCorner"]."'" :"null").",
                                 ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").",".(($jsonRAW["procurando"]["Coach"])? "'".$jsonRAW["procurando"]["Coach"]."'" :"null").", $sql_complemento
-                                                 
+
                  )
                 RETURNING id";
         //  echo "<PRE>$sql</PRE>";
@@ -273,22 +282,22 @@ class Teams{
         $sql = "UPDATE times SET
                       time = '".$jsonRAW["time"]."', localtreino = '".$jsonRAW["localtreino"]."', nivelcompeticao = '".$jsonRAW["nivelcompeticao"]."',
 
-                      treino_segunda = ".(($jsonRAW["treino"]["Segunda"])? "'".$jsonRAW["treino"]["Segunda"]."'" :"null").", 
-                      treino_terca = ".(($jsonRAW["treino"]["Terca"])? "'".$jsonRAW["treino"]["Terca"]."'" :"null").", 
-                      treino_quarta = ".(($jsonRAW["treino"]["Quarta"])? "'".$jsonRAW["treino"]["Quarta"]."'" :"null").", 
-                      treino_quinta = ".(($jsonRAW["treino"]["Quinta"])? "'".$jsonRAW["treino"]["Quinta"]."'" :"null").", 
-                      treino_sexta = ".(($jsonRAW["treino"]["Sexta"])? "'".$jsonRAW["treino"]["Sexta"]."'" :"null").", 
-                      treino_sabado = ".(($jsonRAW["treino"]["Sabado"])? "'".$jsonRAW["treino"]["Sabado"]."'" :"null").", 
-                      treino_domingo = ".(($jsonRAW["treino"]["Domingo"])? "'".$jsonRAW["treino"]["Domingo"]."'" :"null").", 
+                      treino_segunda = ".(($jsonRAW["treino"]["Segunda"])? "'".$jsonRAW["treino"]["Segunda"]."'" :"null").",
+                      treino_terca = ".(($jsonRAW["treino"]["Terca"])? "'".$jsonRAW["treino"]["Terca"]."'" :"null").",
+                      treino_quarta = ".(($jsonRAW["treino"]["Quarta"])? "'".$jsonRAW["treino"]["Quarta"]."'" :"null").",
+                      treino_quinta = ".(($jsonRAW["treino"]["Quinta"])? "'".$jsonRAW["treino"]["Quinta"]."'" :"null").",
+                      treino_sexta = ".(($jsonRAW["treino"]["Sexta"])? "'".$jsonRAW["treino"]["Sexta"]."'" :"null").",
+                      treino_sabado = ".(($jsonRAW["treino"]["Sabado"])? "'".$jsonRAW["treino"]["Sabado"]."'" :"null").",
+                      treino_domingo = ".(($jsonRAW["treino"]["Domingo"])? "'".$jsonRAW["treino"]["Domingo"]."'" :"null").",
 
-                      procurando_snake = ".(($jsonRAW["procurando"]["Snake"])? "'".$jsonRAW["procurando"]["Snake"]."'" :"null").", 
-                      procurando_snakecorner = ".(($jsonRAW["procurando"]["SnakeCorner"])? "'".$jsonRAW["procurando"]["SnakeCorner"]."'" :"null").", 
-                      procurando_backcenter = ".(($jsonRAW["procurando"]["BackCenter"])? "'".$jsonRAW["procurando"]["BackCenter"]."'" :"null").", 
-                      procurando_doritos = ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").", 
-                      procurando_doritoscorner = ".(($jsonRAW["procurando"]["DoritosCorner"])? "'".$jsonRAW["procurando"]["DoritosCorner"]."'" :"null").", 
+                      procurando_snake = ".(($jsonRAW["procurando"]["Snake"])? "'".$jsonRAW["procurando"]["Snake"]."'" :"null").",
+                      procurando_snakecorner = ".(($jsonRAW["procurando"]["SnakeCorner"])? "'".$jsonRAW["procurando"]["SnakeCorner"]."'" :"null").",
+                      procurando_backcenter = ".(($jsonRAW["procurando"]["BackCenter"])? "'".$jsonRAW["procurando"]["BackCenter"]."'" :"null").",
+                      procurando_doritos = ".(($jsonRAW["procurando"]["Doritos"])? "'".$jsonRAW["procurando"]["Doritos"]."'" :"null").",
+                      procurando_doritoscorner = ".(($jsonRAW["procurando"]["DoritosCorner"])? "'".$jsonRAW["procurando"]["DoritosCorner"]."'" :"null").",
                       procurando_coach = ".(($jsonRAW["procurando"]["Coach"])? "'".$jsonRAW["procurando"]["Coach"]."'" :"null")."
-                      
-                      $sql_complemento 
+
+                      $sql_complemento
                 WHERE id = ".$jsonRAW["idtime"];
 
     //echo $sql;
