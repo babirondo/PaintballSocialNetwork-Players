@@ -5,7 +5,7 @@
     "slim/php-view": "^2.2",
     "guzzlehttp/guzzle": "6.1",
     "babirondo/rest-api": "2.0",
-    "babirondo/classbd": "0.6"
+    "babirondo/classbd": "0.9"
 
   },
   "require-dev": {
