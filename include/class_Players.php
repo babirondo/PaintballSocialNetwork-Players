@@ -212,7 +212,7 @@ class Players{
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["idade"] = $conexaoBanco->dados["idade"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["cidade"] = $conexaoBanco->dados["cidade"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["playsince"] = $conexaoBanco->dados["playsince"];
-                //$data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["foto"] = $conexaoBanco->dados["foto"];
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["foto"] = $conexaoBanco->dados["foto"];
 
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snake"] = $conexaoBanco->dados["snake"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snakecorner"] = $conexaoBanco->dados["snakecorner"];
@@ -314,9 +314,11 @@ class Players{
 
 
         }
-        if ($jsonRAW["foto"]["tmp_name"]){
-            $fotoSalvar = base64_encode(file_get_contents( $jsonRAW["foto"]["tmp_name"] ));
-            $sql_complemento = " foto = 'data:".$jsonRAW["foto"]["type"].";base64,".$fotoSalvar."', ";
+
+//var_dump($jsonRAW);
+        if ($jsonRAW["fotoSalvar"]){
+//	    $fotoSalvar = base64_encode(file_get_contents( $jsonRAW["foto"]["tmp_name"]  ));
+            $sql_complemento = " foto = 'data:".$jsonRAW["foto"]["type"].";base64,".$jsonRAW["fotoSalvar"]."', ";
         }
 
 
