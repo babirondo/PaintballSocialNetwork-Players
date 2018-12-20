@@ -4,8 +4,8 @@
     "slim/twig-view": "^2.1",
     "slim/php-view": "^2.2",
     "guzzlehttp/guzzle": "6.1",
-    "babirondo/rest-api": "2.0",
-    "babirondo/classbd": "0.9"
+    "babirondo/rest-api": "2.1",
+    "babirondo/classbd": "1.1"
 
   },
   "require-dev": {
