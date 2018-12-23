@@ -17,6 +17,8 @@ class Globais{
 
         $servidor["bancodados_campeonato"] = "192.168.0.150";
         $servidor["bancodados_players"] = "192.168.0.150";
+        $servidor["rabbitmq"] = "192.168.0.150";
+        $servidor["images"] = "http://192.168.0.150:85";
 
         $this->verbose=1;
         switch($this->banco){
@@ -73,8 +75,10 @@ class Globais{
 
 
         //ROTAS
-        $this->healthcheck = $servidor["players"]."/PaintballSocialNetwork-Players/healthcheck/"; //UNIT TEST
+        $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Analyze/Image/:idjogador";
 
+
+        $this->healthcheck = $servidor["players"]."/PaintballSocialNetwork-Players/healthcheck/"; //UNIT TEST
         $this->Players_UPDATE_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
         $this->Players_GET_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado";//UNIT TEST
         $this->Players_ADD_TEAM_endpoint = $servidor["players"]."/PaintballSocialNetwork-Players/Players/Experiences/"; //UNIT TEST

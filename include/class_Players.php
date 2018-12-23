@@ -18,6 +18,8 @@ class Players{
 
         require_once("include/class_Experiences.php");
         $this->Experience = new Experiences();
+
+        $this->API = new \babirondo\REST\RESTCall();
     }
 
 
@@ -55,7 +57,7 @@ class Players{
                 $jsonRAW_novo["idtime"] = $this->con->dados["id_time"];
 
 
-     
+
 
 
                 $this->conAuxiliar = new \babirondo\classbd\db();
@@ -212,7 +214,7 @@ class Players{
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["idade"] = $conexaoBanco->dados["idade"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["cidade"] = $conexaoBanco->dados["cidade"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["playsince"] = $conexaoBanco->dados["playsince"];
-                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["foto"] = $conexaoBanco->dados["foto"];
+                //$data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["foto"] = $conexaoBanco->dados["foto"];
 
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snake"] = $conexaoBanco->dados["snake"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["snakecorner"] = $conexaoBanco->dados["snakecorner"];
@@ -315,10 +317,14 @@ class Players{
 
         }
 
-//var_dump($jsonRAW);
         if ($jsonRAW["fotoSalvar"]){
-//	    $fotoSalvar = base64_encode(file_get_contents( $jsonRAW["foto"]["tmp_name"]  ));
-            $sql_complemento = " foto = 'data:".$jsonRAW["foto"]["type"].";base64,".$jsonRAW["fotoSalvar"]."', ";
+            //TODO: deletar imagem anterior
+
+
+            $trans=null;$trans = array(":idjogador" => $args['idusuario']  );
+            $salvar_imagem_payload["imagem"] = "data:".$jsonRAW["foto"]["type"].";base64,".$jsonRAW["fotoSalvar"];//"binario da foto";
+            $salvar_imagem_payload["TipoImagem"] = $jsonRAW["fotoSalvarTipoImagem"];//"Profile";
+            $query_API = $this->API->CallAPI("POST", strtr( $this->Globais->SaveImage, $trans), json_encode($salvar_imagem_payload,1),'ERRO');
         }
 
 
@@ -362,8 +368,7 @@ class Players{
         if ( $this->con->res == 1 ){
 
 
-            $data =   array(	"resultado" =>  "SUCESSO" ,
-                                "debug" =>  $sql );
+            $data =   array(	"resultado" =>  "SUCESSO"  );
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
         }
         else {
