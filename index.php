@@ -118,42 +118,6 @@ $app->delete('/Players/{idusuariologado}/Experiences/{idexperiencia}', function 
 
 }  );
 
-$app->get('/{idusuario}/MySquads/', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->getMyTeams($request, $response, $args  );
-
-    return $retorno;
-
-}  );
-
-$app->post('/{idusuario}/Teams/', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->Adicionar_time($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
-$app->put('/{idusuario}/Teams/', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->Alterar_Time($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
-
-
-$app->post('/Teams', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->Adicionar_time($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
 
 $app->post('/SearchPlayers/', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
@@ -166,32 +130,6 @@ $app->post('/SearchPlayers/', function ($request, $response, $args)  use ($app )
 }  );
 
 
-// BUSCAR DADOS DE UM TIME, POR GET, ROTA OU POST
-$app->get('/Teams/{pesquisa}', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->getTimes($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
-$app->get('/Teams', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->getTimes($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
-
-$app->post('/SearchTeams/', function ($request, $response, $args)  use ($app )   {
-    require_once("include/class_Teams.php");
-
-    $cTeam = new Teams();
-    $retorno = $cTeam->getTimes($request, $response, $args, $request->getParsedBody() );
-
-    return $retorno;
-}  );
 
 
 

@@ -13,6 +13,7 @@ class Globais{
         $servidor["UI"] = $servidor["frontend"] = "http://192.168.0.150:81";
         $servidor["autenticacao"] = "http://192.168.0.150:82";
         $servidor["players"] = "http://192.168.0.150:83";
+        $servidor["times"] = "http://192.168.0.150:86";
         $servidor["campeonato"] = "http://192.168.0.150:81";
 
         $servidor["bancodados_campeonato"] = "192.168.0.150";
@@ -90,7 +91,7 @@ class Globais{
         $this->ProcurarTimes = $servidor["players"]."/PaintballSocialNetwork-Players/SearchTeams/"; // UNIT TEST
         $this->CriarMeuTimeSalvar = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/";// UNIT TEST
         $this->MeusTimesRemoto = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/MySquads/"; //UNIT TEST
-        $this->adicionar_time = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/"; //UNIT TEST
+        $this->adicionar_time = $servidor["times"]."/PaintballSocialNetwork-Teams/:idjogadorlogado/Teams/"; //UNIT TEST
 
     }
 

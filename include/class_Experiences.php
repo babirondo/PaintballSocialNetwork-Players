@@ -74,7 +74,7 @@ class Experiences{
         }
 
         $sql = "UPDATE resultados SET
-                      idevento = $idevento,
+                      idevento = '$idevento',
                       rank = $rank,
                       mainposicao =  '$posicao'
                  WHERE id = $idexperience" ;
@@ -104,8 +104,9 @@ class Experiences{
         }
 
         $sql = "INSERT INTO resultados (idexperience, idevento, rank, mainposicao )
-                VALUES($idexperience, $idevento, $rank, '$posicao')
+                VALUES($idexperience, '$idevento', $rank, '$posicao')
                 RETURNING id ";
+       
         $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){

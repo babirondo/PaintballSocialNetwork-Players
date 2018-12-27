@@ -56,10 +56,6 @@ class Players{
 
                 $jsonRAW_novo["idtime"] = $this->con->dados["id_time"];
 
-
-
-
-
                 $this->conAuxiliar = new \babirondo\classbd\db();
                 $this->conAuxiliar->conecta($this->Globais->banco ,
                                       $this->Globais->localhost,
@@ -145,7 +141,7 @@ class Players{
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["inicio_ddmmyyyy"] = $this->con->dados["inicio_ddmmyyyy"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim_ddmmyyyy"] = $this->con->dados["fim_ddmmyyyy"];
-                $data["EXPERIENCES"][$this->con->dados["id"]]["RESULTADOS"] = $this->Experience->getResultados($this->con->dados["id"]);
+                $data["EXPERIENCES"][$this->con->dados["id"]]["RESULTADOS"] = $this->Experience->getResultados($this->con->dados["id"]);//xxxxxx
 
 
             }
@@ -168,37 +164,48 @@ class Players{
     function getJogador(  $args , $jsonRAW, $conexaoBanco = null){
 
         if (!$conexaoBanco) $conexaoBanco = $this->con;
+        //var_dump($jsonRAW);
+
+        if (is_array($jsonRAW["idtimes"])) $filtros[] = "   jt.id_time IN (".implode(",",$jsonRAW["idtimes"]).") ";
+        if ( ($jsonRAW["idtime"])) {
+          //var_dump($jsonRAW);exit;
+          $filtros[] = "  jt.id_time IN (".$jsonRAW["idtime"].") ";
+
+        }
 
         //if ($jsonRAW["idtimes"]) $filtros[] = " id IN (".$jsonRAW["idtimes"].")";
-        if ($args["idusuario"]) $filtros[] = " id_jogador = '".$args["idusuario"]."'";
-        if ($args["idjogador"]) $filtros[] = " id_jogador = '".$args["idjogador"]."'";
-        if ($jsonRAW["nome"]) $filtros[] = " nome ilike '%".$jsonRAW["nome"]."%'";
-        if ($args["pesquisa"]) $filtros[] = " time ilike '%".$args["pesquisa"]."%'";
-        if (is_array($jsonRAW["idtimes"])) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (".implode(",",$jsonRAW["idtimes"]).") )";
-        if ( ($jsonRAW["idtime"])) $filtros[] = " id_jogador IN (SELECT id_jogador FROM jogador_times where id_time IN (". ( $jsonRAW["idtime"]).") )";
-        if ($jsonRAW["localtreino"]) $filtros[] = " cidade ilike '%".$jsonRAW["localtreino"]."%'";
-        if ($jsonRAW["nivelcompeticao"]) $filtros[] = " nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
+        if ($args["idusuario"]) $filtros[] = " j.id_jogador = '".$args["idusuario"]."'";
+        if ($args["idjogador"]) $filtros[] = "  j.id_jogador = '".$args["idjogador"]."'";
+        if ($jsonRAW["id_jogador"]) $filtros[] = "  j.id_jogador = '".$jsonRAW["id_jogador"]."'";
 
-        if ($jsonRAW["treino"]["Segunda"]) $filtros[] = " treino_segunda ilike '%".$jsonRAW["treino"]["Segunda"]."%'";
-        if ($jsonRAW["treino"]["Terca"]) $filtros[] = " treino_terca ilike '%".$jsonRAW["treino"]["Terca"]."%'";
-        if ($jsonRAW["treino"]["Quarta"]) $filtros[] = " treino_quarta ilike '%".$jsonRAW["treino"]["Quarta"]."%'";
-        if ($jsonRAW["treino"]["Quinta"]) $filtros[] = " treino_quinta ilike '%".$jsonRAW["treino"]["Quinta"]."%'";
-        if ($jsonRAW["treino"]["Sexta"]) $filtros[] = " treino_sexta ilike '%".$jsonRAW["treino"]["Sexta"]."%'";
-        if ($jsonRAW["treino"]["Sabado"]) $filtros[] = " treino_sabado ilike '%".$jsonRAW["treino"]["Sabado"]."%'";
-        if ($jsonRAW["treino"]["Domingo"]) $filtros[] = " treino_domingo ilike '%".$jsonRAW["treino"]["Domingo"]."%'";
+        if ($jsonRAW["nome"]) $filtros[] = " j.nome ilike '%".$jsonRAW["nome"]."%'";
+        if ($args["pesquisa"]) $filtros[] = "zzzzz time ilike '%".$args["pesquisa"]."%'"; //TODO: buscar nome do time
+        if ($jsonRAW["localtreino"]) $filtros[] = " j.cidade ilike '%".$jsonRAW["localtreino"]."%'";
+        if ($jsonRAW["nivelcompeticao"]) $filtros[] = " j.nivelcompeticao ilike '%".$jsonRAW["nivelcompeticao"]."%'";
 
-        if ($jsonRAW["procurando"]["Snake"]) $filtros[] = " procurando_snake ilike '%".$jsonRAW["procurando"]["Snake"]."%'";
-        if ($jsonRAW["procurando"]["SnakeCorner"]) $filtros[] = " procurando_snakecorner ilike '%".$jsonRAW["procurando"]["SnakeCorner"]."%'";
-        if ($jsonRAW["procurando"]["BackCenter"]) $filtros[] = " procurando_backcenter ilike '%".$jsonRAW["procurando"]["BackCenter"]."%'";
-        if ($jsonRAW["procurando"]["Doritos"]) $filtros[] = " procurando_doritos ilike '%".$jsonRAW["procurando"]["Doritos"]."%'";
-        if ($jsonRAW["procurando"]["DoritosCorner"]) $filtros[] = " procurando_doritoscorner ilike '%".$jsonRAW["procurando"]["DoritosCorner"]."%'";
-        if ($jsonRAW["procurando"]["Coach"]) $filtros[] = " procurando_coach ilike '%".$jsonRAW["procurando"]["Coach"]."%'";
+        if ($jsonRAW["treino"]["Segunda"]) $filtros[] = " j.treino_segunda ilike '%".$jsonRAW["treino"]["Segunda"]."%'";
+        if ($jsonRAW["treino"]["Terca"]) $filtros[] = " j.treino_terca ilike '%".$jsonRAW["treino"]["Terca"]."%'";
+        if ($jsonRAW["treino"]["Quarta"]) $filtros[] = " j.treino_quarta ilike '%".$jsonRAW["treino"]["Quarta"]."%'";
+        if ($jsonRAW["treino"]["Quinta"]) $filtros[] = " j.treino_quinta ilike '%".$jsonRAW["treino"]["Quinta"]."%'";
+        if ($jsonRAW["treino"]["Sexta"]) $filtros[] = " j.treino_sexta ilike '%".$jsonRAW["treino"]["Sexta"]."%'";
+        if ($jsonRAW["treino"]["Sabado"]) $filtros[] = " j.treino_sabado ilike '%".$jsonRAW["treino"]["Sabado"]."%'";
+        if ($jsonRAW["treino"]["Domingo"]) $filtros[] = " j.treino_domingo ilike '%".$jsonRAW["treino"]["Domingo"]."%'";
+
+        if ($jsonRAW["procurando"]["Snake"]) $filtros[] = " j.procurando_snake ilike '%".$jsonRAW["procurando"]["Snake"]."%'";
+        if ($jsonRAW["procurando"]["SnakeCorner"]) $filtros[] = " j.procurando_snakecorner ilike '%".$jsonRAW["procurando"]["SnakeCorner"]."%'";
+        if ($jsonRAW["procurando"]["BackCenter"]) $filtros[] = " j.procurando_backcenter ilike '%".$jsonRAW["procurando"]["BackCenter"]."%'";
+        if ($jsonRAW["procurando"]["Doritos"]) $filtros[] = " j.procurando_doritos ilike '%".$jsonRAW["procurando"]["Doritos"]."%'";
+        if ($jsonRAW["procurando"]["DoritosCorner"]) $filtros[] = " j.procurando_doritoscorner ilike '%".$jsonRAW["procurando"]["DoritosCorner"]."%'";
+        if ($jsonRAW["procurando"]["Coach"]) $filtros[] = " j.procurando_coach ilike '%".$jsonRAW["procurando"]["Coach"]."%'";
 
 
         //var_dump($args);
 
-        $sql = "SELECT * FROM jogadores  ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
-
+        $sql = "SELECT j.* , jt.id_time
+                FROM jogadores  j
+                  LEFT JOIN jogador_times jt ON (jt.id_jogador = j.id_jogador)
+                ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
+        //echo $sql;
 //        if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
         $conexaoBanco->executa($sql);
 
@@ -209,6 +216,11 @@ class Players{
                 $this->Score = new Score();
             }
             while ($conexaoBanco->navega(0)) {
+              $data["TIMES"] [$conexaoBanco->dados["id_time"]] = $conexaoBanco->dados["id_time"];
+
+              $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["inicio"] = $conexaoBanco->dados["inicio"];
+              $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["fim"] = $conexaoBanco->dados["fim"];
+              $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["resultados"] = $conexaoBanco->dados["resultados"];
 
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["nome"] = $conexaoBanco->dados["nome"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["idade"] = $conexaoBanco->dados["idade"];
@@ -438,11 +450,6 @@ class Players{
     }
 
     function CriarTime($idtime="", $time="", $idjogador=null ){
-        require_once("include/class_api.php");
-        require_once("include/globais.php");
-
-        $API = new class_API();
-        $Globais = new Globais();
 
         if (!$idtime ){
             $array_post = null;
@@ -450,8 +457,8 @@ class Players{
 
 
             $trans = null;$trans = array(":idjogadorlogado" => $idjogador);
-
-            $query_API = $API->CallAPI("POST",  strtr($Globais->adicionar_time, $trans)  , json_encode($array_post));
+            //xxxx
+            $query_API = $this->API->CallAPI("POST",  strtr($this->Globais->adicionar_time, $trans)  , json_encode($array_post));
 
           //  var_dump($query_API);
 
@@ -530,7 +537,7 @@ class Players{
     }
 
     function Adicionar_time_ao_jogador(  $request, $response, $args,   $jsonRAW){
-
+      //xxxxxxx
         if (!$this->con->conectado){
             $data =   array(	"resultado" =>  "ERRO",
                 "erro" => "nao conectado - ".$this->con->erro );
@@ -550,6 +557,7 @@ class Players{
 
         //TODO: criticar fim nulo e trim
         //TODO: criticar tipo data no campo inicio, formato BR ou gringo
+        //time criado no form
 
         $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $jsonRAW['idjogadorlogado']);
         if (!$idtime){
@@ -577,11 +585,15 @@ class Players{
 
 
             if (is_array($jsonRAW["idevento"])){
+                //$data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"], $jsonRAW["rank"], $data["idexperience"]);
+
                 foreach ($jsonRAW["idevento"] as $idRes => $event){
-                    if ($idRes > 0 ){
+                    //echo "<BR>-------------------  ".$idRes;
+                    if ($idRes >= 0 ){
                         $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
                     }
                 }
+
             }
 
 
@@ -620,7 +632,7 @@ class Players{
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
-
+        //alterando time
         $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"]);
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
@@ -640,18 +652,29 @@ class Players{
                      fim = ".$fim.",
                      resultados = '".$jsonRAW["resultados"]."'
                  WHERE id = '".$args["idexperience"]."'";
+
         $this->con->executa($sql);
 
         if ( $this->con->res == 1 ){
 
             if (is_array($jsonRAW["idevento"]) ) {
 
-                foreach ($jsonRAW["idevento"] as $idResultado => $evento){
+                //var_dump($jsonRAW);
 
-                    if ( $idResultado > 0)
-                        $this->Experience->AlterarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $idResultado);
-                    else
-                        $this->Experience->AdicionarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $args["idexperience"]);
+                foreach ($jsonRAW["idevento"] as $idResultado => $evento){
+//                    echo "<BR>aqui ---------------- $evento $idResultado";
+                    if ($evento){
+                      if ( $idResultado > 0){
+                          //echo "<BR> Alterando experience ";
+
+                          $this->Experience->AlterarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $idResultado);
+                        }
+                      else{
+                        //echo "<BR> Inlcuindo experience";
+                          $this->Experience->AdicionarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $args["idexperience"]);
+                        }
+
+                    }
                 }
             }
 
