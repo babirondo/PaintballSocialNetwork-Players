@@ -114,7 +114,7 @@ class testPlayers extends PHPUnit\Framework\TestCase
         //   var_dump($jsonRetorno);
         $this->assertEquals('SUCESSO', $jsonRetorno["resultado"] );
     }
-*/
+
 
     public function testPOST_JogadoresMeusTimes()
     {
@@ -417,7 +417,7 @@ class testPlayers extends PHPUnit\Framework\TestCase
         $this->assertEquals('Bruno Siqueira', $jsonRetorno["JOGADORES"][$idjogador]["nome"]);
 
     }
-
+*/
 
     public function testGet_HealthCheck()
     {
