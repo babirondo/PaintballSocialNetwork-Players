@@ -22,7 +22,7 @@ class testPlayers extends PHPUnit\Framework\TestCase
         $this->Globais = new raiz\Globais();
     }
 
-
+/*
     public function testPUT_AlterandoMeuTime()
     {
 
@@ -114,7 +114,7 @@ class testPlayers extends PHPUnit\Framework\TestCase
         //   var_dump($jsonRetorno);
         $this->assertEquals('SUCESSO', $jsonRetorno["resultado"] );
     }
-
+*/
 
     public function testPOST_JogadoresMeusTimes()
     {
