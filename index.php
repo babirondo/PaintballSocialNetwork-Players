@@ -76,6 +76,15 @@ $app->post('/Players/Experiences/', function ($request, $response, $args)  use (
 
 }  );
 
+$app->post('/Players/{idjogadorlogado}/Experiences/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+    $retorno = $cPlayer->Adicionar_time_ao_jogador($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
 
 
 $app->post('/Teams/Players/', function ($request, $response, $args)  use ($app )   {

@@ -83,10 +83,10 @@ class Experiences{
 
         if ( $this->con->res == 1 ){
 
-            return true;
+            return true." $sql";
         }
         else {
-            return false;
+            return 'erro nao foi possivel alterar a experience '.$sql;
         }
     }
 
@@ -96,7 +96,7 @@ class Experiences{
 
         if (!$idexperience){
             $data =  array(	"resultado" =>  "ERRO",
-                "erro" => "Experience don't registered" );
+                            "erro" => "Experience not registered" );
             return $response->withStatus(500)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
@@ -106,7 +106,7 @@ class Experiences{
         $sql = "INSERT INTO resultados (idexperience, idevento, rank, mainposicao )
                 VALUES($idexperience, '$idevento', $rank, '$posicao')
                 RETURNING id ";
-       
+       //echo $sql;
         $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){

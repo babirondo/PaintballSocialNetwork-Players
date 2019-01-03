@@ -33,7 +33,7 @@ class Players{
                 ->withJson($data);
         }
 
-
+        //var_dump($jsonRAW);
 
         $sql = "SELECT jt.id_time
                 FROM jogador_times  jt
@@ -134,6 +134,8 @@ class Players{
 
             while ($this->con->navega(0)){
                 $contador++;
+
+                $data["EXPERIENCES"][$this->con->dados["id"]]["idexperience"] = $this->con->dados["id"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["idtime"] = $this->con->dados["id_time"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["inicio"] = $this->con->dados["inicio_formatado"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . $this->con->dados["fim_formatado"];
@@ -457,10 +459,9 @@ class Players{
 
 
             $trans = null;$trans = array(":idjogadorlogado" => $idjogador);
-            //xxxx
+
             $query_API = $this->API->CallAPI("POST",  strtr($this->Globais->adicionar_time, $trans)  , json_encode($array_post));
 
-          //  var_dump($query_API);
 
             if ($query_API){
                 if ($query_API["resultado"] == "SUCESSO") {
@@ -558,8 +559,12 @@ class Players{
         //TODO: criticar fim nulo e trim
         //TODO: criticar tipo data no campo inicio, formato BR ou gringo
         //time criado no form
+          //criando direto pelo form
+        //$idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $jsonRAW['idjogadorlogado']);
 
-        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $jsonRAW['idjogadorlogado']);
+
+        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $args['idjogadorlogado']);
+
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
                 "erro" => $this->data["erro"]." .. nao foi possivel criar o time" );
@@ -573,9 +578,10 @@ class Players{
         $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
 
         $sql = "INSERT INTO jogador_times (id_jogador, id_time, inicio, fim, resultados)
-                VALUES(".$jsonRAW['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')
+                VALUES(".$args['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')
                 RETURNING id";
         //echo $sql;exit;
+
         $this->con->executa($sql, 1);
 
         if ( $this->con->res == 1 ){
@@ -590,7 +596,8 @@ class Players{
                 foreach ($jsonRAW["idevento"] as $idRes => $event){
                     //echo "<BR>-------------------  ".$idRes;
                     if ($idRes >= 0 ){
-                        $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                        $data["idresultado"][] = $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                        //die( $event." ".$jsonRAW["posicao"][$idRes]." ".$jsonRAW["rank"][$idRes]." ".$data["idexperience"]." = ".$data["idresultado"][0] );
                     }
                 }
 
@@ -632,11 +639,11 @@ class Players{
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
-        //alterando time
-        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"]);
+        //alterando time e experience
+        $idtime = $this->CriarTime($jsonRAW["idtime"],$jsonRAW["time"], $args["idusuario"]);
         if (!$idtime){
             $data =  array(	"resultado" =>  "ERRO",
-                "erro" => "nao foi possivel criar o time" );
+                            "erro" => "nao foi possivel criar o time" );
             return $response->withStatus(509)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
@@ -652,8 +659,10 @@ class Players{
                      fim = ".$fim.",
                      resultados = '".$jsonRAW["resultados"]."'
                  WHERE id = '".$args["idexperience"]."'";
-
-        $this->con->executa($sql);
+//echo $sql;
+        $this->con->executa($sql,1);
+        $debug["sql"] = $sql;
+        //exit;
 
         if ( $this->con->res == 1 ){
 
@@ -667,25 +676,25 @@ class Players{
                       if ( $idResultado > 0){
                           //echo "<BR> Alterando experience ";
 
-                          $this->Experience->AlterarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $idResultado);
+                          $debug["experiences"][$idResultado] = $this->Experience->AlterarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $idResultado);
                         }
                       else{
                         //echo "<BR> Inlcuindo experience";
-                          $this->Experience->AdicionarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $args["idexperience"]);
+                          $debug["experiences"][$idResultado]  = $this->Experience->AdicionarExperience( $evento, $jsonRAW["posicao"][$idResultado], $jsonRAW["rank"][$idResultado], $args["idexperience"]);
                         }
 
                     }
                 }
             }
 
-            $data =   array(	"resultado" =>  "SUCESSO" );
+            $data =   array(	"resultado" =>  "SUCESSO" , "debug" => $debug);
             return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
         }
         else {
 
             // nao encontrado
             $data =    array(	"resultado" =>  "ERRO",
-                "erro" => "Nao foi possivel alterar os dados - $mensagem_retorno - $sql");
+                              "erro" => "Nao foi possivel alterar os dados - $mensagem_retorno - $sql");
 
             return $response->withStatus(200)
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
