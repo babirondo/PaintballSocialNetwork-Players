@@ -96,9 +96,6 @@ class Globais{
         $this->editar_experiencia = $servidor["players"]."/PaintballSocialNetwork-Players/Players/:idjogadorlogado/Experiences/:idexperiencia/";//UNIT TEST
         $this->ProcurarJogadores = $servidor["players"]."/PaintballSocialNetwork-Players/SearchPlayers/"; //UNIT TEST
         $this->jogadores_por_times = $servidor["players"]."/PaintballSocialNetwork-Players/Teams/Players/";  // UNIT TEST
-        //$this->ProcurarTimes = $servidor["players"]."/PaintballSocialNetwork-Players/SearchTeams/"; // UNIT TEST
-        //$this->CriarMeuTimeSalvar = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/Teams/";// UNIT TEST
-        //$this->MeusTimesRemoto = $servidor["players"]."/PaintballSocialNetwork-Players/:idjogadorlogado/MySquads/"; //UNIT TEST
         $this->adicionar_time = $servidor["times"]."/PaintballSocialNetwork-Teams/:idjogadorlogado/Teams/"; //UNIT TEST
 
     }
