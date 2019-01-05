@@ -83,7 +83,7 @@ class Globais{
 
 
         //ROTAS
-        $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Analyze/Image/:idjogador";
+        $this->SaveImage = $servidor["images"]."/PaintballSocialNetwork-Images/Usuarios/Analyze/Image/:idjogador";
 
 
         $this->healthcheck = $servidor["players"]."/PaintballSocialNetwork-Players/healthcheck/"; //UNIT TEST

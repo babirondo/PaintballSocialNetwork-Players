@@ -33,12 +33,19 @@ class Players{
                 ->withJson($data);
         }
 
+        if ($jsonRAW['idtimes_array']){
+          $where[] = " jt.id_time IN ( ".implode(",",$jsonRAW['idtimes_array']).")" ;
+        }
+        if ($jsonRAW['idtimes']){
+          $where[] = " jt.id_time IN (  ".$jsonRAW['idtimes_array'].")" ;
+        }
+
         //var_dump($jsonRAW);
 
         $sql = "SELECT jt.id_time
                 FROM jogador_times  jt
 
-                WHERE jt.id_time  IN (  ". implode(",",$jsonRAW['idtimes'] ) .")
+                ".((is_array($where))?" WHERE ". implode(" and ", $where):"")."
                 group by jt.id_time";
 
         $this->con->executa($sql);
@@ -218,7 +225,8 @@ class Players{
                 $this->Score = new Score();
             }
             while ($conexaoBanco->navega(0)) {
-              $data["TIMES"] [$conexaoBanco->dados["id_time"]] = $conexaoBanco->dados["id_time"];
+              if ($conexaoBanco->dados["id_time"])
+                $data["TIMES"] [$conexaoBanco->dados["id_time"]] = $conexaoBanco->dados["id_time"];
 
               $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["inicio"] = $conexaoBanco->dados["inicio"];
               $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["fim"] = $conexaoBanco->dados["fim"];
@@ -332,9 +340,6 @@ class Players{
         }
 
         if ($jsonRAW["fotoSalvar"]){
-            //TODO: deletar imagem anterior
-
-
             $trans=null;$trans = array(":idjogador" => $args['idusuario']  );
             $salvar_imagem_payload["imagem"] = "data:".$jsonRAW["foto"]["type"].";base64,".$jsonRAW["fotoSalvar"];//"binario da foto";
             $salvar_imagem_payload["TipoImagem"] = $jsonRAW["fotoSalvarTipoImagem"];//"Profile";
