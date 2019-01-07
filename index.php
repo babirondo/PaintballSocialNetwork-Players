@@ -44,6 +44,16 @@ $app->post('/Players/', function ($request, $response, $args)  use ($app )   {
     return $retorno;
 
 }  );
+$app->post('/Player/{idusuario}/ImageProcessed', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
+
+    $cPlayer = new Players();
+    $retorno = $cPlayer->Atualizar_Jogador($request, $response, $args, $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
+
 $app->put('/Players/{idusuario}', function ($request, $response, $args)  use ($app )   {
     require_once("include/class_Players.php");
 
