@@ -568,6 +568,25 @@ class Players{
 
     }
 
+
+      function ValidaData($dat){
+        $data = explode("/","$dat"); // fatia a string $dat em pedados, usando / como referência
+        $d = $data[0];
+        $m = $data[1];
+        $y = $data[2];
+
+        // verifica se a data é válida!
+        // 1 = true (válida)
+        // 0 = false (inválida)
+        $res = @checkdate($m,$d,$y);
+        if ($res == 1){
+            return true;
+        } else {
+            return false;
+        }
+      }
+
+
     function Adicionar_time_ao_jogador(  $request, $response, $args,   $jsonRAW){
       //xxxxxxx
         if (!$this->con->conectado){
@@ -586,6 +605,23 @@ class Players{
                 ->withHeader('Content-type', 'application/json;charset=utf-8')
                 ->withJson($data);
         }
+        IF (! $this->ValidaData ("01/".$jsonRAW["inicio"])  ) {
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "Start Date field invalid (mm/yyyy) "  );
+
+            return $response->withStatus(202)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+        IF (! $this->ValidaData ("01/".$jsonRAW["fim"])  &&  $jsonRAW["fim"]) {
+            $data =  array(	"resultado" =>  "ERRO",
+                "erro" => "End Date field invalid (mm/yyyy) "  );
+
+            return $response->withStatus(202)
+                ->withHeader('Content-type', 'application/json;charset=utf-8')
+                ->withJson($data);
+        }
+
 
         //TODO: criticar fim nulo e trim
         //TODO: criticar tipo data no campo inicio, formato BR ou gringo
@@ -605,11 +641,11 @@ class Players{
 
         }
 
-        $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":" null ");
-        $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":" null ");
+        $inicio = (($jsonRAW["inicio"])?"'01/".$jsonRAW["inicio"]."'":"null");
+        $fim = (($jsonRAW["fim"])?"'01/".$jsonRAW["fim"]."'":"null");
 
         $sql = "INSERT INTO jogador_times (id_jogador, id_time, inicio, fim, resultados)
-                VALUES(".$args['idjogadorlogado'].",".$idtime.",".$inicio.",$fim, '".$jsonRAW["resultados"]."')
+                VALUES(".$args['idjogadorlogado'].",".$idtime.",$inicio,$fim, '".$jsonRAW["resultados"]."')
                 RETURNING id";
         //echo $sql;exit;
 
@@ -626,9 +662,12 @@ class Players{
 
                 foreach ($jsonRAW["idevento"] as $idRes => $event){
                     //echo "<BR>-------------------  ".$idRes;
-                    if ($idRes >= 0 ){
-                        $data["idresultado"][] = $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
-                        //die( $event." ".$jsonRAW["posicao"][$idRes]." ".$jsonRAW["rank"][$idRes]." ".$data["idexperience"]." = ".$data["idresultado"][0] );
+                    if ($event && $jsonRAW["posicao"][$idRes] &&  $jsonRAW["rank"][$idRes] && $data["idexperience"]){
+                        if ($idRes >= 0 ){
+                            $data["idresultado"][] = $data["ideventos"][] = $this->Experience->AdicionarExperience($event, $jsonRAW["posicao"][$idRes], $jsonRAW["rank"][$idRes], $data["idexperience"]);
+                            //die( $event." ".$jsonRAW["posicao"][$idRes]." ".$jsonRAW["rank"][$idRes]." ".$data["idexperience"]." = ".$data["idresultado"][0] );
+                        }
+
                     }
                 }
 
