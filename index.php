@@ -73,7 +73,15 @@ $app->get('/Players/{idusuario}', function ($request, $response, $args)  use ($a
     return $retorno;
 
 }  );
+$app->get('/Player/{identificador}/', function ($request, $response, $args)  use ($app )   {
+    require_once("include/class_Players.php");
 
+    $cPlayer = new Players();
+    $retorno = $cPlayer->getJogadorAPI($request, $response, $args , $request->getParsedBody() );
+
+    return $retorno;
+
+}  );
 
 
 $app->post('/Players/Experiences/', function ($request, $response, $args)  use ($app )   {

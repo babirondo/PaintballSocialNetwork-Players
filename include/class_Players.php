@@ -199,6 +199,7 @@ class Players{
         if ($jsonRAW["treino"]["Sexta"]) $filtros[] = " j.treino_sexta ilike '%".$jsonRAW["treino"]["Sexta"]."%'";
         if ($jsonRAW["treino"]["Sabado"]) $filtros[] = " j.treino_sabado ilike '%".$jsonRAW["treino"]["Sabado"]."%'";
         if ($jsonRAW["treino"]["Domingo"]) $filtros[] = " j.treino_domingo ilike '%".$jsonRAW["treino"]["Domingo"]."%'";
+        if ($args["identificador"] ) $filtros[] = " j.identificador = '".$args["identificador"]."'";
 
         if ($jsonRAW["procurando"]["Snake"]) $filtros[] = " j.procurando_snake ilike '%".$jsonRAW["procurando"]["Snake"]."%'";
         if ($jsonRAW["procurando"]["SnakeCorner"]) $filtros[] = " j.procurando_snakecorner ilike '%".$jsonRAW["procurando"]["SnakeCorner"]."%'";
@@ -213,7 +214,8 @@ class Players{
         $sql = "SELECT j.* , jt.id_time
                 FROM jogadores  j
                   LEFT JOIN jogador_times jt ON (jt.id_jogador = j.id_jogador)
-                ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"") ;
+                ".((is_array($filtros))?" WHERE ".implode( " or ",$filtros) :"")."
+                ORDER BY status_imagem_profile ASC" ;
         //echo $sql;
 //        if ($args["nao_calcula_skill"] == 1) { echo $sql; exit; }
         $conexaoBanco->executa($sql);
@@ -231,6 +233,8 @@ class Players{
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["inicio"] = $conexaoBanco->dados["inicio"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["fim"] = $conexaoBanco->dados["fim"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["TIMES"] [$conexaoBanco->dados["id_time"]]["resultados"] = $conexaoBanco->dados["resultados"];
+
+                $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["identificador"] = $conexaoBanco->dados["identificador"];
 
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["nome"] = $conexaoBanco->dados["nome"];
                 $data["JOGADORES"][$conexaoBanco->dados["id_jogador"]]["idade"] = $conexaoBanco->dados["idade"];
@@ -314,7 +318,7 @@ class Players{
         }
         else{
             $data["resultado"] = "ERRO";
-            return $response->withJson($data, 404)->withHeader('Content-Type', 'application/json');
+            return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
 
         }
     }
@@ -389,6 +393,21 @@ class Players{
         if ($jsonRAW["procurando"]["Coach"])
           $alterar_campos[] = "procurando_coach = '".$jsonRAW["procurando"]["Coach"]."'";
 
+          if ($jsonRAW["Snake"])
+            $alterar_campos[] = "snake = '".$jsonRAW["Snake"]."'";
+          if ($jsonRAW["SnakeCorner"])
+            $alterar_campos[] = "snakecorner = '".$jsonRAW["SnakeCorner"]."'";
+          if ($jsonRAW["BackCenter"])
+            $alterar_campos[] = "backcenter = '".$jsonRAW["BackCenter"]."'";
+          if ($jsonRAW["Doritos"])
+            $alterar_campos[] = "doritos = '".$jsonRAW["Doritos"]."'";
+          if ($jsonRAW["DoritosCorner"])
+            $alterar_campos[] = "doritoscorner = '".$jsonRAW["DoritosCorner"]."'";
+          if ($jsonRAW["Coach"])
+            $alterar_campos[] = "coach = '".$jsonRAW["Coach"]."'";
+
+
+
         if ($jsonRAW["statusProfileImage"] )
           $alterar_campos[] = "status_imagem_profile = '".$jsonRAW["statusProfileImage"] ."'";
         if ( $update_foto )
@@ -402,10 +421,11 @@ class Players{
                         ".implode(",",$alterar_campos)."
                     WHERE  id_jogador = '".$args['idusuario']."'  ";
             //echo "<PRE>$sql</PRE>";
+            $data["debug"]="$sql";
             $this->con->executa($sql);
 
             if ( $this->con->res == 1 ){
-                $data =   array(	"resultado" =>  "SUCESSO"  );
+                $data["resultado"]="SUCESSO";
                 return $response->withJson($data, 200)->withHeader('Content-Type', 'application/json');
             }
             else {
