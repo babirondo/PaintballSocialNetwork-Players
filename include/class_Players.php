@@ -145,7 +145,7 @@ class Players{
                 $data["EXPERIENCES"][$this->con->dados["id"]]["idexperience"] = $this->con->dados["id"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["idtime"] = $this->con->dados["id_time"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["inicio"] = $this->con->dados["inicio_formatado"];
-                $data["EXPERIENCES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . $this->con->dados["fim_formatado"];
+                $data["EXPERIENCES"][$this->con->dados["id"]]["periodo"] = $this->con->dados["inicio_formatado"] . " - " . (($this->con->dados["fim_formatado"])?$this->con->dados["fim_formatado"]:"now");
                 $data["EXPERIENCES"][$this->con->dados["id"]]["Resultados"] = $this->con->dados["resultados"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["fim"] = $this->con->dados["fim_formatado"];
                 $data["EXPERIENCES"][$this->con->dados["id"]]["inicio_ddmmyyyy"] = $this->con->dados["inicio_ddmmyyyy"];
@@ -561,8 +561,8 @@ class Players{
 
 
 
-      $sql = "INSERT INTO jogadores (nome )
-          VALUES('".$jsonRAW['nome']."')
+      $sql = "INSERT INTO jogadores (nome , identificador)
+          VALUES('".$jsonRAW['nome']."', '".str_replace(" ","",$jsonRAW['nome']).rand(1,100)."')
           RETURNING id_jogador";
       $this->con->executa($sql, 1);
 
